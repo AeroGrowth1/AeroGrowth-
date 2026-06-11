@@ -20,6 +20,8 @@
   --green-hover: #1a6535;
   --red-danger: #da373c;
   --red-hover: #a92b2f;
+  --amber: #f0a500;
+  --amber-hover: #c88800;
   
   /* Layout Options */
   --card-bg: rgba(43, 45, 49, 0.75);
@@ -145,11 +147,12 @@ body {
   top: 15px;
   left: 0;
   height: 4px;
-  background-color: var(--blurple);
+  background: linear-gradient(90deg, var(--blurple), #9b59b6);
   width: 0%;
   border-radius: 2px;
-  transition: width var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1;
+  box-shadow: 0 0 8px rgba(88, 101, 242, 0.6);
 }
 
 .progress-container::before {
@@ -192,13 +195,21 @@ body {
   background-color: var(--blurple);
   border-color: var(--blurple);
   color: #ffffff;
-  box-shadow: 0 0 12px rgba(88, 101, 242, 0.4);
+  box-shadow: 0 0 16px rgba(88, 101, 242, 0.55);
+  transform: scale(1.1);
 }
 
 .step-node.completed {
   background-color: var(--green-success);
   border-color: var(--green-success);
   color: #ffffff;
+  font-size: 0;
+}
+
+.step-node.completed::after {
+  content: '✓';
+  font-size: 0.85rem;
+  font-weight: 800;
 }
 
 .step-label {
@@ -284,6 +295,7 @@ body {
 
 .form-group input[type="text"],
 .form-group input[type="number"],
+.form-group select,
 .form-group textarea {
   width: 100%;
   background-color: var(--bg-input);
@@ -295,10 +307,23 @@ body {
   font-size: 0.95rem;
   transition: border-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
   outline: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.form-group select {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23dbdee1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  background-size: 16px;
+  padding-right: 40px;
 }
 
 .form-group input[type="text"]:focus,
 .form-group input[type="number"]:focus,
+.form-group select:focus,
 .form-group textarea:focus {
   border-color: var(--blurple);
   box-shadow: 0 0 0 3px rgba(88, 101, 242, 0.25);
@@ -416,29 +441,49 @@ body {
 .nav-btn {
   font-family: var(--font-family);
   font-size: 0.95rem;
-  font-weight: 600;
-  padding: 12px 24px;
-  border-radius: 4px;
+  font-weight: 700;
+  padding: 12px 26px;
+  border-radius: 6px;
   border: none;
   cursor: pointer;
-  transition: background-color var(--transition-speed) ease, transform 0.1s ease;
+  transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   outline: none;
+  letter-spacing: 0.01em;
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.08);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.nav-btn:hover::after {
+  opacity: 1;
 }
 
 .nav-btn:active {
-  transform: scale(0.98);
+  transform: scale(0.97);
 }
 
 .btn-primary {
-  background-color: var(--blurple);
+  background: linear-gradient(135deg, var(--blurple), #7289da);
   color: #ffffff;
+  box-shadow: 0 4px 14px rgba(88, 101, 242, 0.35);
 }
 
 .btn-primary:hover {
-  background-color: var(--blurple-hover);
+  background: linear-gradient(135deg, var(--blurple-hover), #5b6fbe);
+  box-shadow: 0 6px 20px rgba(88, 101, 242, 0.5);
+  transform: translateY(-1px);
 }
 
 .btn-secondary {
@@ -448,22 +493,38 @@ body {
 }
 
 .btn-secondary:hover:not(.disabled) {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .btn-secondary.disabled {
-  opacity: 0.4;
+  opacity: 0.35;
   cursor: not-allowed;
   border-color: rgba(255, 255, 255, 0.05);
 }
 
 .btn-success {
-  background-color: var(--green-success);
+  background: linear-gradient(135deg, #2d9c5f, #248046);
   color: #ffffff;
+  box-shadow: 0 4px 14px rgba(36, 128, 70, 0.4);
 }
 
 .btn-success:hover {
-  background-color: var(--green-hover);
+  background: linear-gradient(135deg, #259152, #1a6535);
+  box-shadow: 0 6px 20px rgba(36, 128, 70, 0.55);
+  transform: translateY(-1px);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #e83c41, #da373c);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(218, 55, 60, 0.4);
+}
+
+.btn-danger:hover {
+  background: linear-gradient(135deg, #c43035, #a92b2f);
+  box-shadow: 0 6px 20px rgba(218, 55, 60, 0.55);
+  transform: translateY(-1px);
 }
 
 /* Footer */
@@ -471,7 +532,41 @@ body {
   text-align: center;
   color: var(--text-muted);
   font-size: 0.8rem;
-  margin-top: 12px;
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.discord-join-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(88, 101, 242, 0.15);
+  border: 1px solid rgba(88, 101, 242, 0.35);
+  color: #a5b4fc;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 8px 18px;
+  border-radius: 99px;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  transition: all 0.2s ease;
+}
+
+.discord-join-btn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.discord-join-btn:hover {
+  background: rgba(88, 101, 242, 0.28);
+  border-color: rgba(88, 101, 242, 0.6);
+  color: #c7d2fe;
+  box-shadow: 0 0 14px rgba(88, 101, 242, 0.3);
+  transform: translateY(-1px);
 }
 
 /* Utility classes */
@@ -598,4 +693,132 @@ body {
     padding: 10px 18px;
     font-size: 0.9rem;
   }
+}
+
+/* Dynamic Role Selection Cards */
+.role-selector {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 8px;
+  width: 100%;
+}
+
+.role-card {
+  position: relative;
+  cursor: pointer;
+  display: block;
+}
+
+.role-card input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.role-card-content {
+  background: var(--bg-tertiary);
+  border: 2px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 18px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: all var(--transition-speed) ease;
+}
+
+.role-card:hover .role-card-content {
+  border-color: rgba(88, 101, 242, 0.5);
+  background: rgba(88, 101, 242, 0.06);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+}
+
+.role-card input[type="radio"]:checked + .role-card-content {
+  border-color: var(--blurple);
+  background: rgba(88, 101, 242, 0.12);
+  box-shadow: 0 0 0 2px rgba(88,101,242,0.3), 0 8px 24px rgba(88, 101, 242, 0.3);
+}
+
+.role-card input[type="radio"]:checked + .role-card-content .role-icon {
+  filter: drop-shadow(0 0 8px rgba(88,101,242,0.6));
+  transform: scale(1.15);
+  transition: all 0.25s ease;
+}
+
+.role-icon {
+  font-size: 2.2rem;
+  margin-bottom: 10px;
+  transition: all 0.25s ease;
+  display: block;
+}
+
+.role-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #ffffff;
+  margin-bottom: 6px;
+}
+
+.role-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* Review Action Buttons */
+.review-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 24px;
+}
+
+.review-action-btn {
+  font-size: 1rem;
+  padding: 14px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  gap: 10px;
+}
+
+.review-action-btn svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* Role badge in review portal */
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(88, 101, 242, 0.15);
+  border: 1px solid rgba(88, 101, 242, 0.3);
+  color: #a5b4fc;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 99px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  margin-top: 6px;
+  display: inline-block;
+}
+
+.role-badge.media {
+  background: rgba(234, 179, 8, 0.12);
+  border-color: rgba(234, 179, 8, 0.3);
+  color: #fde047;
+}
+
+.role-badge.dev {
+  background: rgba(34, 197, 94, 0.12);
+  border-color: rgba(34, 197, 94, 0.3);
+  color: #86efac;
 }
