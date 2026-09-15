@@ -27,14 +27,6 @@
       <p id="app-subtitle">Review applicant details and submit your decision.</p>
     </header>
 
-    <!-- Keyboard shortcut hints -->
-    <div class="keyboard-hints hidden" id="keyboard-hints">
-      <span class="kbd-hint"><kbd>A</kbd> Approve</span>
-      <span class="kbd-hint"><kbd>R</kbd> Reject</span>
-      <span class="kbd-hint"><kbd>N</kbd> Focus Notes</span>
-      <span class="kbd-hint"><kbd>Esc</kbd> Back</span>
-    </div>
-
     <main class="form-card review-card">
 
       <!-- Loading State -->
@@ -58,19 +50,7 @@
           </div>
           <div class="review-header-badges">
             <span id="role-badge" class="role-badge"></span>
-            <span id="application-status" class="status-pill status-pending">Pending Review</span>
-          </div>
-        </div>
-
-        <!-- 5-Stage Pipeline Selector -->
-        <div class="pipeline-section">
-          <label class="pipeline-label">Application Stage</label>
-          <div class="pipeline" id="status-pipeline" role="group" aria-label="Application status stages">
-            <button type="button" class="pipeline-stage active" data-status="pending"      aria-label="Set status to Pending Review">🕐 Pending</button>
-            <button type="button" class="pipeline-stage"        data-status="under_review" aria-label="Set status to Under Review">🔍 Under Review</button>
-            <button type="button" class="pipeline-stage"        data-status="interview"    aria-label="Set status to Interview">🎤 Interview</button>
-            <button type="button" class="pipeline-stage"        data-status="accepted"     aria-label="Set status to Accepted">✅ Accepted</button>
-            <button type="button" class="pipeline-stage"        data-status="rejected"     aria-label="Set status to Rejected">❌ Rejected</button>
+            <span id="decision-preview" class="status-pill status-pending">Pending Review</span>
           </div>
         </div>
 
@@ -78,7 +58,6 @@
         <div class="review-answers-wrapper">
           <div class="review-answers-header">
             <h3 class="review-section-label">Application Answers</h3>
-            <button type="button" id="expand-all-btn" class="btn-text-action">Expand All</button>
           </div>
           <div class="review-detail-card" id="answers-container">
             <!-- Populated dynamically -->
@@ -96,13 +75,6 @@
             <small class="helper-text">Your name will appear in the Discord decision notification.</small>
           </div>
 
-          <!-- Reviewer Notes -->
-          <div class="form-group">
-            <label for="reviewer_notes">Private Notes <span class="notes-optional">(optional)</span></label>
-            <textarea id="reviewer_notes" rows="3" placeholder="Add private notes about this applicant… (included in Discord notification)" maxlength="800"></textarea>
-            <div class="char-counter" id="counter-reviewer_notes">0 / 800</div>
-          </div>
-
           <!-- Decision Buttons -->
           <div class="decision-actions">
             <button type="button" id="approve-btn" class="nav-btn btn-success decision-btn" aria-label="Approve application (keyboard: A)">
@@ -113,14 +85,6 @@
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
               Reject
             </button>
-          </div>
-        </div>
-
-        <!-- Reviewer Activity Log -->
-        <div class="activity-log-section" id="activity-log-section">
-          <h3 class="review-section-label">Recent Review Activity</h3>
-          <div class="activity-log" id="activity-log">
-            <p class="activity-empty">No review activity recorded yet.</p>
           </div>
         </div>
 
@@ -143,8 +107,6 @@
 
     <footer class="app-footer">
       <div class="footer-links">
-        <a href="index.html" class="footer-link">Application Form</a>
-        <a href="dashboard.html" class="footer-link">Dashboard</a>
         <a href="https://discord.gg/EeA7zbjpM3" target="_blank" rel="noopener noreferrer" class="discord-join-btn">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C3.66,31.58-1.86,54.65,1,77.53A105.73,105.73,0,0,0,32,96.36a77.7,77.7,0,0,0,6.63-10.85,68.43,68.43,0,0,1-10.4-5c.89-.65,1.76-1.34,2.58-2.07a75.14,75.14,0,0,0,72.57,0c.82.73,1.69,1.42,2.58,2.07a68.43,68.43,0,0,1-10.4,5,77.7,77.7,0,0,0,6.63,10.85,105.73,105.73,0,0,0,31-18.83C129,54.65,123.5,31.58,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53S36.18,40.36,42.45,40.36,53.83,46,53.83,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53S78.41,40.36,84.69,40.36,96.07,46,96.07,53,91,65.69,84.69,65.69Z"/></svg>
           Join Discord
@@ -191,16 +153,10 @@
     const statusView   = document.getElementById('status-view');
 
     const reviewerNameInput = document.getElementById('reviewer_name');
-    const reviewerNotesInput= document.getElementById('reviewer_notes');
     const approveBtn   = document.getElementById('approve-btn');
     const rejectBtn    = document.getElementById('reject-btn');
     const statusBackBtn= document.getElementById('status-back-btn');
-    const notesCounter = document.getElementById('counter-reviewer_notes');
-    const pipeline     = document.getElementById('status-pipeline');
-    const statusPill   = document.getElementById('application-status');
-    const kbHints      = document.getElementById('keyboard-hints');
 
-    let currentStatus = 'pending';
     let parsedAnswers = null;
     let schema        = null;
     let appId         = null;
@@ -246,26 +202,18 @@
       roleBadge.className   = `role-badge role-badge--${selectedRole}`;
     }
 
-    // Pre-select status from URL action param
-    if (actionParam === 'approve') setStatus('accepted');
-    else if (actionParam === 'reject') setStatus('rejected');
-    else setStatus('pending');
+    const decisionPreview = document.getElementById('decision-preview');
+    if (actionParam === 'approve') {
+      decisionPreview.textContent = 'Preselected: Approve';
+      decisionPreview.className = 'status-pill status-accepted';
+    } else if (actionParam === 'reject') {
+      decisionPreview.textContent = 'Preselected: Reject';
+      decisionPreview.className = 'status-pill status-rejected';
+    }
 
-    // ── Restore reviewer name + notes ─────────────────────────
+    // ── Restore reviewer name ─────────────────────────────────
     const savedName = localStorage.getItem('reviewer_name');
     if (savedName) reviewerNameInput.value = savedName;
-    if (appId) reviewerNotesInput.value = loadNotes(appId);
-
-    // ── Notes character counter ───────────────────────────────
-    reviewerNotesInput.addEventListener('input', () => {
-      const len = reviewerNotesInput.value.length;
-      if (notesCounter) {
-        notesCounter.textContent = `${len} / 800`;
-        notesCounter.classList.toggle('char-counter--warn',   len >= 600 && len < 760);
-        notesCounter.classList.toggle('char-counter--danger', len >= 760);
-      }
-      if (appId) saveNotes(appId, reviewerNotesInput.value);
-    });
 
     // ── Build Q&A list ────────────────────────────────────────
     const staticQs = [
@@ -301,39 +249,9 @@
       container.appendChild(item);
     });
 
-    // Expand All toggle
-    const expandBtn = document.getElementById('expand-all-btn');
-    let expanded = false;
-    expandBtn?.addEventListener('click', () => {
-      expanded = !expanded;
-      container.classList.toggle('review-detail-card--expanded', expanded);
-      expandBtn.textContent = expanded ? 'Collapse' : 'Expand All';
-    });
-
-    // ── Pipeline stage selection ──────────────────────────────
-    pipeline.querySelectorAll('.pipeline-stage').forEach(btn => {
-      btn.addEventListener('click', () => setStatus(btn.dataset.status));
-    });
-
-    function setStatus(status) {
-      currentStatus = status;
-      const cfg = STATUS_CONFIG[status] || STATUS_CONFIG.pending;
-
-      // Update pill
-      statusPill.textContent = cfg.emoji + ' ' + cfg.label;
-      statusPill.className   = `status-pill status-${status}`;
-
-      // Update pipeline buttons
-      pipeline.querySelectorAll('.pipeline-stage').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.status === status);
-      });
-    }
-
     // ── Show review content ───────────────────────────────────
     loadingView.classList.add('hidden');
     reviewView.classList.remove('hidden');
-    kbHints?.classList.remove('hidden');
-    renderActivityLog();
 
     // ── Decision buttons ──────────────────────────────────────
     approveBtn.addEventListener('click', () => submitDecision('accepted'));
@@ -341,18 +259,6 @@
     statusBackBtn.addEventListener('click', () => {
       statusView.classList.add('hidden');
       reviewView.classList.remove('hidden');
-    });
-
-    // ── Keyboard shortcuts ────────────────────────────────────
-    document.addEventListener('keydown', e => {
-      // Don't fire shortcuts while typing in an input/textarea
-      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
-      if (reviewView.classList.contains('hidden')) return;
-
-      if (e.key === 'a' || e.key === 'A') { e.preventDefault(); submitDecision('accepted'); }
-      if (e.key === 'r' || e.key === 'R') { e.preventDefault(); submitDecision('rejected'); }
-      if (e.key === 'n' || e.key === 'N') { e.preventDefault(); reviewerNotesInput.focus(); }
-      if (e.key === 'Escape')              { e.preventDefault(); window.history.back(); }
     });
 
     // ── Submit Decision ───────────────────────────────────────
@@ -366,7 +272,7 @@
       reviewerNameInput.closest('.form-group').classList.remove('invalid');
       localStorage.setItem('reviewer_name', reviewerName);
 
-      const notes = reviewerNotesInput.value.trim();
+      const notes = '';
 
       // Transition to processing state
       reviewView.classList.add('hidden');
@@ -439,37 +345,6 @@
           err.message || 'Could not send decision. Check your connection or webhook configuration.');
         statusBackBtn.classList.remove('hidden');
       }
-    }
-
-    // ── Activity Log Renderer ─────────────────────────────────
-    function renderActivityLog() {
-      const log    = getActivityLog();
-      const logEl  = document.getElementById('activity-log');
-      if (!logEl) return;
-
-      if (log.length === 0) {
-        logEl.innerHTML = '<p class="activity-empty">No review activity recorded yet.</p>';
-        return;
-      }
-
-      logEl.innerHTML = '';
-      log.slice(0, 10).forEach(entry => {
-        const item = document.createElement('div');
-        item.className = 'activity-item';
-
-        const cfg = STATUS_CONFIG[entry.status] || {};
-        item.innerHTML = `
-          <span class="activity-badge" style="background:${cfg.color || '#5865f2'}20;color:${cfg.color || '#5865f2'}">${cfg.emoji || '•'}</span>
-          <div class="activity-body">
-            <span class="activity-text">
-              <strong>${escapeHTML(entry.reviewer)}</strong> marked
-              <strong>${escapeHTML(entry.applicant)}</strong> as <strong>${escapeHTML(entry.action)}</strong>
-            </span>
-            <span class="activity-time">${timeAgo(entry.at)}</span>
-          </div>
-        `;
-        logEl.appendChild(item);
-      });
     }
 
     // ── Error screen ──────────────────────────────────────────
