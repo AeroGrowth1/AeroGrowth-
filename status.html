@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Track your Webhook Builder staff application status by entering your Application ID.">
+  <title>Track My Application — Webhook Builder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 127.14 96.36'%3E%3Cpath fill='%235865F2' d='M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C3.66,31.58-1.86,54.65,1,77.53A105.73,105.73,0,0,0,32,96.36a77.7,77.7,0,0,0,6.63-10.85,68.43,68.43,0,0,1-10.4-5c.89-.65,1.76-1.34,2.58-2.07a75.14,75.14,0,0,0,72.57,0c.82.73,1.69,1.42,2.58,2.07a68.43,68.43,0,0,1-10.4,5,77.7,77.7,0,0,0,6.63,10.85,105.73,105.73,0,0,0,31-18.83C129,54.65,123.5,31.58,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53S36.18,40.36,42.45,40.36,53.83,46,53.83,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53S78.41,40.36,84.69,40.36,96.07,46,96.07,53,91,65.69,84.69,65.69Z'/%3E%3C/svg%3E">
+</head>
+<body>
+  <div class="decor-orb orb-1"></div>
+  <div class="decor-orb orb-2"></div>
+
+  <div class="app-container" style="max-width:560px;">
+    <header class="app-header">
+      <div class="logo-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36" width="40" height="30" class="discord-logo" aria-hidden="true">
+          <path fill="currentColor" d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C3.66,31.58-1.86,54.65,1,77.53A105.73,105.73,0,0,0,32,96.36a77.7,77.7,0,0,0,6.63-10.85,68.43,68.43,0,0,1-10.4-5c.89-.65,1.76-1.34,2.58-2.07a75.14,75.14,0,0,0,72.57,0c.82.73,1.69,1.42,2.58,2.07a68.43,68.43,0,0,1-10.4,5,77.7,77.7,0,0,0,6.63,10.85,105.73,105.73,0,0,0,31-18.83C129,54.65,123.5,31.58,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53S36.18,40.36,42.45,40.36,53.83,46,53.83,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53S78.41,40.36,84.69,40.36,96.07,46,96.07,53,91,65.69,84.69,65.69Z"/>
+        </svg>
+      </div>
+      <h1>Application Status</h1>
+      <p>Enter your Application ID to see where your application stands.</p>
+    </header>
+
+    <main class="form-card">
+
+      <!-- Search Form -->
+      <div id="search-view">
+        <div class="form-group">
+          <label for="status-search-input">Application ID <span class="required">*</span></label>
+          <div class="search-input-row">
+            <input type="text" id="status-search-input" placeholder="e.g. APP-2026-00001"
+                   autocomplete="off" spellcheck="false" style="text-transform:uppercase;">
+            <button type="button" id="status-search-btn" class="nav-btn btn-primary">Look Up</button>
+          </div>
+          <small class="helper-text">Your Application ID was shown on screen after you submitted your application.</small>
+        </div>
+
+        <div class="status-notice">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Status is tracked in this browser. For the most up-to-date information, contact a staff member on Discord.</span>
+        </div>
+      </div>
+
+      <!-- Result View -->
+      <div id="result-view" class="hidden">
+        <div class="status-result-card">
+          <div class="status-result-header">
+            <div>
+              <div class="app-id-badge" id="result-app-id">APP-0000-00000</div>
+              <h2 id="result-username" style="margin-top:10px;color:#fff;font-size:1.4rem;font-weight:800;"></h2>
+            </div>
+            <span id="result-status-pill" class="status-pill status-pending">Pending Review</span>
+          </div>
+
+          <div class="status-result-grid">
+            <div class="status-result-item">
+              <span class="status-result-label">Role Applied</span>
+              <span class="status-result-value" id="result-role">—</span>
+            </div>
+            <div class="status-result-item">
+              <span class="status-result-label">Submitted</span>
+              <span class="status-result-value" id="result-submitted">—</span>
+            </div>
+            <div class="status-result-item">
+              <span class="status-result-label">Last Updated</span>
+              <span class="status-result-value" id="result-updated">—</span>
+            </div>
+            <div class="status-result-item">
+              <span class="status-result-label">Reviewer</span>
+              <span class="status-result-value" id="result-reviewer">Pending assignment</span>
+            </div>
+          </div>
+
+          <div id="result-note-section" class="result-note hidden">
+            <div class="result-note-label">Reviewer Note</div>
+            <div class="result-note-text" id="result-note-text"></div>
+          </div>
+        </div>
+
+        <div class="result-actions">
+          <button type="button" id="result-back-btn" class="nav-btn btn-secondary">← Search Again</button>
+          <a href="index.html" class="nav-btn btn-primary">Apply Again →</a>
+        </div>
+      </div>
+
+      <!-- Not Found View -->
+      <div id="notfound-view" class="hidden" style="text-align:center;padding:24px 0;">
+        <div style="font-size:3rem;margin-bottom:12px;">🔍</div>
+        <h3 style="color:#fff;margin-bottom:8px;">Application Not Found</h3>
+        <p style="color:var(--text-muted);margin-bottom:20px;">No application matching <strong id="notfound-id"></strong> was found in this browser's history.</p>
+        <button type="button" id="notfound-back-btn" class="nav-btn btn-secondary">← Try Again</button>
+      </div>
+
+    </main>
+
+    <footer class="app-footer">
+      <div class="footer-links">
+        <a href="index.html" class="footer-link">Apply Now</a>
+        <a href="https://discord.gg/EeA7zbjpM3" target="_blank" rel="noopener noreferrer" class="discord-join-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C3.66,31.58-1.86,54.65,1,77.53A105.73,105.73,0,0,0,32,96.36a77.7,77.7,0,0,0,6.63-10.85,68.43,68.43,0,0,1-10.4-5c.89-.65,1.76-1.34,2.58-2.07a75.14,75.14,0,0,0,72.57,0c.82.73,1.69,1.42,2.58,2.07a68.43,68.43,0,0,1-10.4,5,77.7,77.7,0,0,0,6.63,10.85,105.73,105.73,0,0,0,31-18.83C129,54.65,123.5,31.58,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53S36.18,40.36,42.45,40.36,53.83,46,53.83,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53S78.41,40.36,84.69,40.36,96.07,46,96.07,53,91,65.69,84.69,65.69Z"/></svg>
+          Join Discord
+        </a>
+      </div>
+      <p>&copy; 2026 Webhook Builder &mdash; Staff Portal</p>
+    </footer>
+  </div>
+
+  <script src="utils.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchInput   = document.getElementById('status-search-input');
+    const searchBtn     = document.getElementById('status-search-btn');
+    const searchView    = document.getElementById('search-view');
+    const resultView    = document.getElementById('result-view');
+    const notFoundView  = document.getElementById('notfound-view');
+
+    // Auto-uppercase as user types
+    searchInput.addEventListener('input', () => {
+      const pos = searchInput.selectionStart;
+      searchInput.value = searchInput.value.toUpperCase();
+      searchInput.setSelectionRange(pos, pos);
+    });
+
+    // Check URL param on load (e.g. status.html?id=APP-2026-00001)
+    const urlId = new URLSearchParams(window.location.search).get('id');
+    if (urlId) {
+      searchInput.value = urlId.toUpperCase();
+      lookup(urlId.toUpperCase());
+    }
+
+    searchBtn.addEventListener('click', () => lookup(searchInput.value.trim().toUpperCase()));
+    searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') lookup(searchInput.value.trim().toUpperCase()); });
+
+    document.getElementById('result-back-btn').addEventListener('click', showSearch);
+    document.getElementById('notfound-back-btn').addEventListener('click', showSearch);
+
+    function showSearch() {
+      resultView.classList.add('hidden');
+      notFoundView.classList.add('hidden');
+      searchView.classList.remove('hidden');
+    }
+
+    function lookup(id) {
+      if (!id) return;
+
+      const history = getSubmissionHistory();
+      const entry   = history.find(h => h.appId === id);
+
+      if (!entry) {
+        document.getElementById('notfound-id').textContent = id;
+        searchView.classList.add('hidden');
+        resultView.classList.add('hidden');
+        notFoundView.classList.remove('hidden');
+        return;
+      }
+
+      // Populate result card
+      const cfg = STATUS_CONFIG[entry.status] || STATUS_CONFIG.pending;
+      document.getElementById('result-app-id').textContent        = entry.appId;
+      document.getElementById('result-username').textContent      = entry.discordTag || '—';
+      document.getElementById('result-role').textContent          = entry.roleTitle || entry.role || '—';
+      document.getElementById('result-submitted').textContent     = new Date(entry.timestamp).toLocaleDateString(undefined, { dateStyle: 'medium' });
+      document.getElementById('result-updated').textContent       = entry.updatedAt ? new Date(entry.updatedAt).toLocaleDateString(undefined, { dateStyle: 'medium' }) : 'Not yet reviewed';
+      document.getElementById('result-reviewer').textContent      = entry.reviewerName || 'Pending assignment';
+
+      const statusPill = document.getElementById('result-status-pill');
+      statusPill.textContent = cfg.emoji + ' ' + cfg.label;
+      statusPill.className   = `status-pill status-${entry.status}`;
+
+      // Reviewer note
+      const savedNote = (() => {
+        try { return JSON.parse(localStorage.getItem(`rop_notes_${id}`) || 'null') || ''; } catch (_) { return ''; }
+      })();
+      const noteSection = document.getElementById('result-note-section');
+      const noteText    = document.getElementById('result-note-text');
+      if (entry.note || savedNote) {
+        noteText.textContent    = entry.note || savedNote;
+        noteSection.classList.remove('hidden');
+      } else {
+        noteSection.classList.add('hidden');
+      }
+
+      searchView.classList.add('hidden');
+      notFoundView.classList.add('hidden');
+      resultView.classList.remove('hidden');
+    }
+  });
+  </script>
+</body>
+</html>

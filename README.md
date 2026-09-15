@@ -8,13 +8,13 @@ Because it has **no backend**, you can deploy this website for free directly on 
 
 ## 🚀 Quick Deployment to GitHub Pages
 
-1. Go to your GitHub repository (e.g. `shahcaf/rop-apply`).
+1. Go to the GitHub repository: `AeroGrowth1/AeroGrowth-`.
 2. Go to **Settings** -> **Pages** (under the "Code and automation" section).
 3. Under **Build and deployment**:
    - **Source**: Select `Deploy from a branch`.
    - **Branch**: Select `main` (and `/ (root)` folder).
 4. Click **Save**.
-5. Wait a minute and refresh. Your page will be live at `https://<your-username>.github.io/rop-apply/`!
+5. Wait a minute and refresh. Your page will be live at `https://aerogrowth1.github.io/AeroGrowth-/`!
 
 ---
 

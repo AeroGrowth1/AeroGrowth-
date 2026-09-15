@@ -1,106 +1,37 @@
 // ============================================================
-// CONFIGURATION — Edit these values for your Discord server
+// app.js — Application Form Logic for ROP Apply
+// Requires: schemas.js, utils.js (loaded before this script)
 // ============================================================
+
+// ── Configuration ─────────────────────────────────────────────
+// ⚠️ NOTE: This webhook URL is visible in browser source. Do not
+//    share or commit sensitive webhooks. Rotate if compromised.
 const CONFIG = {
-  WEBHOOK_URL: 'https://discord.com/api/webhooks/1508490753784152229/2wKdOZuCETLKraReRhbHuCkWFJ0B7OsB690dzcSaMF_dxruSjjoG_ScyYdmxJg3kxBvL',
-  SERVER_NAME: '|ROP| Right Order Party'
+  WEBHOOK_URL: 'https://discord.com/api/webhooks/1549381519670247534/OfCuGQpWqXXDG51Z9rYurHP1ojHLiAax3abCl-RNtZI3OmQ7nz-g0zbaR9CWRLUlz_p0',
+  SERVER_NAME: 'aerogrowth',
+  DISCORD_INVITE: 'https://discord.gg/EeA7zbjpM3',
+  PUBLIC_SITE_URL: 'https://aerogrowth1.github.io/AeroGrowth-/'
 };
-// ============================================================
 
-// Compress a JSON string using deflate compression and return a URL-safe Base64 string
-async function compressPayload(str) {
-  try {
-    const stream = new Blob([str]).stream();
-    const compressedStream = stream.pipeThrough(new CompressionStream('deflate'));
-    const response = new Response(compressedStream);
-    const buffer = await response.arrayBuffer();
+// ── Character Limits ─────────────────────────────────────────
+// Default max for textareas without a specific maxChars in schema
+const DEFAULT_MAX_CHARS = 1000;
 
-    let binary = '';
-    const bytes = new Uint8Array(buffer);
-    const len = bytes.byteLength;
-    for (let i = 0; i < len; i++) {
-      binary += String.fromCharCode(bytes[i]);
-    }
-    return btoa(binary)
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=+$/, '');
-  } catch (e) {
-    console.error('Failed to compress payload', e);
-    return null;
-  }
+function buildReviewBaseUrl() {
+  const isFileOrigin = window.location.protocol === 'file:' || !window.location.origin || window.location.origin === 'null';
+  if (isFileOrigin) return `${CONFIG.PUBLIC_SITE_URL.replace(/\/$/, '')}/review.html`;
+
+  const path = window.location.pathname.replace(/(?:index\.html)?$/, '');
+  return `${window.location.origin}${path}review.html`;
 }
 
-const ROLE_SCHEMAS = {
-  discord_staff: {
-    title: "Discord Staff Team",
-    questions: [
-      { id: 'hours_active',   label: 'How many hours per week can you dedicate to the server?', type: 'number', step: 2, min: 1, max: 168, placeholder: 'e.g. 15', required: true },
-      { id: 'why_staff',      label: 'Why do you want to join our staff team?', type: 'textarea', step: 2, placeholder: 'Tell us your motivation...', required: true },
-      { id: 'experience',     label: 'What prior moderation/staff experience do you have?', type: 'textarea', step: 2, placeholder: 'Mention server names, sizes, or responsibilities...', required: true },
-      { id: 'strengths',      label: 'What are your key strengths?', type: 'textarea', step: 2, placeholder: 'What makes you stand out?', required: true },
-      
-      { id: 'weaknesses',     label: 'What are your weaknesses, and how do you manage them?', type: 'textarea', step: 3, placeholder: 'Be honest - we value self-awareness...', required: true },
-      { id: 'stress_handle',  label: 'How do you handle stressful situations or conflict?', type: 'textarea', step: 3, placeholder: 'Explain your coping mechanisms...', required: true },
-      { id: 'handle_spam',    label: 'Scenario: A user is spamming links in chat. What do you do?', type: 'textarea', step: 3, placeholder: 'Detail your step-by-step reaction...', required: true },
-      { id: 'handle_argument',label: 'Scenario: Two members are arguing in text/voice. How do you de-escalate?', type: 'textarea', step: 3, placeholder: 'How do you handle conflict between users?', required: true },
-      
-      { id: 'handle_dm_adv',  label: 'Scenario: A member is reported for advertising in DMs. What do you do?', type: 'textarea', step: 4, placeholder: 'What proof do you ask for, and what action is taken?', required: true },
-      { id: 'handle_abuse',   label: 'Scenario: You suspect another staff member is abusing power. What do you do?', type: 'textarea', step: 4, placeholder: 'How do you handle internal staff conflicts?', required: true },
-      { id: 'handle_nsfw',    label: 'Scenario: A user posts NSFW content in general chat. What is your response?', type: 'textarea', step: 4, placeholder: 'What actions do you take immediately?', required: true },
-      { id: 'handle_unsure',  label: 'If you are unsure of a moderation decision, what do you do?', type: 'textarea', step: 4, placeholder: 'Who do you consult, or how do you decide?', required: true },
-      
-      { id: 'hobbies',        label: 'What are your hobbies or interests outside of Discord?', type: 'textarea', step: 5, placeholder: 'We want to know the person behind the screen!', required: true },
-      { id: 'server_mgmt',    label: 'Do you have experience with server management, bots, or configurations?', type: 'textarea', step: 5, placeholder: 'e.g. setting up dyno, permissions, webhooks...', required: true },
-      { id: 'guidelines_agree', label: 'Do you agree to follow all staff guidelines and remain active?', type: 'checkbox', step: 5, required: true, checkboxLabel: 'I agree to behave professionally, uphold server rules, and communicate with the team.' },
-      { id: 'additional_info', label: 'Is there anything else you would like to share?', type: 'textarea', step: 5, placeholder: 'Anything else we should know?', required: true }
-    ]
-  },
-  media_team: {
-    title: "Media Team",
-    questions: [
-      { id: 'media_role',     label: 'What specific role are you applying for?', type: 'select', step: 2, options: ['Graphic Designer', 'Video Editor', 'Content Creator', 'Social Media Manager', 'Other'], required: true },
-      { id: 'hours_active',   label: 'How many hours per week can you dedicate to media work?', type: 'number', step: 2, min: 1, max: 168, placeholder: 'e.g. 10', required: true },
-      { id: 'portfolio',      label: 'Please provide a link to your portfolio or past work.', type: 'text', step: 2, placeholder: 'e.g. Behance, YouTube channel, Drive link...', required: true, helperText: 'Provide links to your graphic designs, edit reels, or channels.' },
-      { id: 'tools_used',     label: 'What software/tools do you specialize in?', type: 'text', step: 2, placeholder: 'e.g. Photoshop, Premiere Pro, After Effects, Figma, Canva...', required: true },
-      
-      { id: 'why_media',      label: 'Why do you want to join our Media Team?', type: 'textarea', step: 3, placeholder: 'Tell us why you want to design/create for ROP...', required: true },
-      { id: 'prior_work',     label: 'Detail any prior experience creating media content for servers or organizations.', type: 'textarea', step: 3, placeholder: 'Describe your past projects and responsibilities...', required: true },
-      { id: 'strengths_media', label: 'What are your core creative strengths?', type: 'textarea', step: 3, placeholder: 'e.g. visual styling, motion graphics, audio design, branding...', required: true },
-      
-      { id: 'handle_negative_feedback', label: 'Scenario: A piece of content you designed/edited gets negative feedback. How do you handle it?', type: 'textarea', step: 4, placeholder: 'Explain your reaction and process...', required: true },
-      { id: 'handle_deadline', label: 'Scenario: We need a thumbnail or promo video created on short notice (e.g. 24 hours). How do you handle it?', type: 'textarea', step: 4, placeholder: 'How do you handle urgent tasks or tight deadlines?', required: true },
-      { id: 'handle_disagreement', label: 'Scenario: You disagree with a lead or staff member on design direction. How do you resolve this?', type: 'textarea', step: 4, placeholder: 'Explain how you approach differences in creative vision...', required: true },
-      
-      { id: 'hobbies',        label: 'What are your hobbies or interests outside of media work?', type: 'textarea', step: 5, placeholder: 'Tell us about yourself...', required: true },
-      { id: 'guidelines_agree', label: 'Do you agree to follow ROP media guidelines and represent the server professionally?', type: 'checkbox', step: 5, required: true, checkboxLabel: 'I agree to follow design guidelines, use licensed assets, and communicate professionally.' },
-      { id: 'additional_info', label: 'Is there anything else you would like to share?', type: 'textarea', step: 5, placeholder: 'Anything else we should know?', required: true }
-    ]
-  },
-  rbx_dev: {
-    title: "Roblox Dev Team",
-    questions: [
-      { id: 'dev_role',       label: 'What is your primary development role?', type: 'select', step: 2, options: ['Scripter (Luau)', 'Builder / Map Designer', 'UI/UX Designer', '3D Modeler (Blender)', 'Animator', 'Other'], required: true },
-      { id: 'hours_active',   label: 'How many hours per week can you dedicate to project development?', type: 'number', step: 2, min: 1, max: 168, placeholder: 'e.g. 12', required: true },
-      { id: 'roblox_profile', label: 'Please provide a link to your Roblox Profile.', type: 'text', step: 2, placeholder: 'e.g. https://www.roblox.com/users/123456/profile', required: true },
-      { id: 'portfolio',      label: 'Please provide a link to your portfolio or showcases.', type: 'text', step: 2, placeholder: 'e.g. DevForum portfolio, GitHub, Roblox place links...', required: true },
-      
-      { id: 'prior_games',    label: 'List any Roblox games you have contributed to or worked on.', type: 'textarea', step: 3, placeholder: 'Provide links and detail what you did in each game...', required: true },
-      { id: 'why_dev',        label: 'Why do you want to join the ROP Dev Team?', type: 'textarea', step: 3, placeholder: 'What motivates you to build/script for ROP?', required: true },
-      { id: 'collaboration',  label: 'How do you handle working as a team with other devs (builders, scripters, modelers)?', type: 'textarea', step: 3, placeholder: 'Describe your teamwork and communication habits...', required: true },
-      
-      { id: 'handle_bug',     label: 'Scenario: A critical game-breaking bug is discovered in production right before an event. How do you react?', type: 'textarea', step: 4, placeholder: 'Detail your troubleshooting and response steps...', required: true },
-      { id: 'handle_refactor', label: 'Scenario: Another developer refactors your scripts or modifies your assets without warning. What do you do?', type: 'textarea', step: 4, placeholder: 'How do you address creative differences or code ownership disputes?', required: true },
-      { id: 'handle_deadline', label: 'Scenario: You are struggling to meet a milestone deadline. What is your action plan?', type: 'textarea', step: 4, placeholder: 'How do you manage stress and communicate delays?', required: true },
-      
-      { id: 'hobbies',        label: 'What are your hobbies or interests outside of development?', type: 'textarea', step: 5, placeholder: 'Tell us about yourself...', required: true },
-      { id: 'guidelines_agree', label: 'Do you agree to follow developer guidelines, protect project assets, and not leak updates?', type: 'checkbox', step: 5, required: true, checkboxLabel: 'I agree to maintain asset security, follow coding/building standards, and cooperate with project leads.' },
-      { id: 'additional_info', label: 'Is there anything else you would like to share?', type: 'textarea', step: 5, placeholder: 'Anything else we should know?', required: true }
-    ]
-  }
-};
+// ── Draft Save Debounce ───────────────────────────────────────
+let draftSaveTimer = null;
+const DRAFT_DEBOUNCE_MS = 800;
 
+// ============================================================
 document.addEventListener('DOMContentLoaded', () => {
+  // DOM references
   const form = document.getElementById('staff-app-form');
   const stepNodes = document.querySelectorAll('.step-node');
   const progressBar = document.getElementById('progress-indicator');
@@ -114,339 +45,590 @@ document.addEventListener('DOMContentLoaded', () => {
   const statusMessage = document.getElementById('status-message');
   const statusResetBtn = document.getElementById('status-reset-btn');
   const dynamicContainer = document.getElementById('dynamic-sections-container');
+  const draftBanner = document.getElementById('draft-banner');
+  const draftRoleLabel = document.getElementById('draft-role-label');
+  const draftRestoreBtn = document.getElementById('draft-restore-btn');
+  const draftClearBtn = document.getElementById('draft-clear-btn');
+  const cooldownBanner = document.getElementById('cooldown-banner');
+  const cooldownTime = document.getElementById('cooldown-time');
 
   let currentStep = 1;
   const totalSteps = 5;
-
-  // Render initial dynamic steps for default selected role
   let selectedRole = document.querySelector('input[name="role"]:checked').value;
+  let isSubmitting = false;
+
+  // ── Initial Setup ──────────────────────────────────────────
   renderDynamicSteps(selectedRole);
   updateNavigation();
+  checkForDrafts();
 
-  // Handle Role Selection change
+  // ── Role Selection ─────────────────────────────────────────
   form.querySelectorAll('input[name="role"]').forEach(radio => {
-    radio.addEventListener('change', (e) => {
+    radio.addEventListener('change', e => {
       selectedRole = e.target.value;
       renderDynamicSteps(selectedRole);
-      // If we are past step 1, reset back to step 1 when they change the role to prevent confusion
-      if (currentStep > 1) {
-        currentStep = 1;
-      }
+      if (currentStep > 1) currentStep = 1;
       updateNavigation();
+      checkForDrafts(); // Check if a draft exists for the newly selected role
     });
   });
 
+  // ── Navigation ─────────────────────────────────────────────
   nextBtn.addEventListener('click', () => {
-    if (validateStep(currentStep)) { currentStep++; updateNavigation(); }
+    if (validateStep(currentStep)) {
+      currentStep++;
+      updateNavigation();
+      scheduleDraftSave();
+    }
   });
+
   prevBtn.addEventListener('click', () => {
-    if (currentStep > 1) { currentStep--; updateNavigation(); }
+    if (currentStep > 1) {
+      currentStep--;
+      updateNavigation();
+    }
   });
 
-  // Attach inputs check for the static inputs in step 1
+  // Clear invalid state on input change (static step 1 fields)
   form.querySelectorAll('.form-section[data-section="1"] input').forEach(el => {
-    el.addEventListener('input', () => el.closest('.form-group')?.classList.remove('invalid'));
-    el.addEventListener('change', () => el.closest('.form-group')?.classList.remove('invalid'));
+    el.addEventListener('input', () => {
+      el.closest('.form-group')?.classList.remove('invalid');
+      scheduleDraftSave();
+    });
+    el.addEventListener('change', () => {
+      el.closest('.form-group')?.classList.remove('invalid');
+      scheduleDraftSave();
+    });
   });
 
-  function renderDynamicSteps(roleKey) {
-    const schema = ROLE_SCHEMAS[roleKey];
-    dynamicContainer.innerHTML = '';
-    
-    const steps = [2, 3, 4, 5];
-    steps.forEach(stepNum => {
-      const section = document.createElement('section');
-      section.className = 'form-section';
-      section.dataset.section = stepNum;
-      
-      let stepTitle = '';
-      let stepDesc = '';
-      if (stepNum === 2) {
-        stepTitle = `Step 2: Role Details & Commitment`;
-        stepDesc = `Provide specific details about your availability and qualifications for the role.`;
-      } else if (stepNum === 3) {
-        stepTitle = `Step 3: Background & Motivation`;
-        stepDesc = `Tell us why you want to join and what experiences you bring.`;
-      } else if (stepNum === 4) {
-        stepTitle = `Step 4: Scenarios & Decision-Making`;
-        stepDesc = `Describe how you handle specific situations or conflicts.`;
-      } else if (stepNum === 5) {
-        stepTitle = `Step 5: Agreement & Miscellaneous`;
-        stepDesc = `Almost done! Review the guidelines and provide any final details.`;
-      }
-      
-      section.innerHTML = `
-        <h2 class="section-title">${stepTitle}</h2>
-        <p class="section-description">${stepDesc}</p>
-      `;
-      
-      const stepQuestions = schema.questions.filter(q => q.step === stepNum);
-      stepQuestions.forEach((q, idx) => {
-        const group = document.createElement('div');
-        group.className = 'form-group';
-        
-        let inputHtml = '';
-        if (q.type === 'textarea') {
-          inputHtml = `<textarea id="${q.id}" name="${q.id}" rows="3" placeholder="${q.placeholder}" ${q.required ? 'required' : ''}></textarea>`;
-        } else if (q.type === 'text') {
-          inputHtml = `<input type="text" id="${q.id}" name="${q.id}" placeholder="${q.placeholder}" ${q.required ? 'required' : ''}>`;
-        } else if (q.type === 'number') {
-          inputHtml = `<input type="number" id="${q.id}" name="${q.id}" placeholder="${q.placeholder}" min="${q.min || ''}" max="${q.max || ''}" ${q.required ? 'required' : ''}>`;
-        } else if (q.type === 'select') {
-          const optionsHtml = q.options.map(o => `<option value="${o}">${o}</option>`).join('');
-          inputHtml = `<select id="${q.id}" name="${q.id}" ${q.required ? 'required' : ''}>${optionsHtml}</select>`;
-        } else if (q.type === 'checkbox') {
-          inputHtml = `
-            <label class="checkbox-container" for="${q.id}">
-              <input type="checkbox" id="${q.id}" name="${q.id}" value="Yes, I agree" ${q.required ? 'required' : ''}>
-              <span class="checkmark"></span>
-              <span class="checkbox-label">${q.checkboxLabel}</span>
-            </label>
-          `;
-        }
-        
-        const labelHtml = q.type === 'checkbox' 
-          ? `<label>Agreement <span class="required">*</span></label>`
-          : `<label for="${q.id}">${q.label} ${q.required ? '<span class="required">*</span>' : ''}</label>`;
-           
-        const helperHtml = q.helperText ? `<small class="helper-text">${q.helperText}</small>` : '';
-        const errorMsg = q.type === 'checkbox'
-          ? `You must agree to continue.`
-          : `Please fill out this field.`;
-        
-        group.innerHTML = `
-          ${labelHtml}
-          ${inputHtml}
-          <span class="error-msg" id="error-${q.id}">${errorMsg}</span>
-          ${helperHtml}
-        `;
-        section.appendChild(group);
-      });
-      
-      dynamicContainer.appendChild(section);
+  // ── Draft Restore / Clear ──────────────────────────────────
+  draftRestoreBtn?.addEventListener('click', restoreDraft);
+  draftClearBtn?.addEventListener('click', () => {
+    clearDraft(selectedRole);
+    hideDraftBanner();
+  });
+
+
+  // ── Draft Banner Logic ─────────────────────────────────────
+  function checkForDrafts() {
+    const draft = loadDraft(selectedRole);
+    const hasDraftData = draft && draft.data && Object.keys(draft.data).length > 1;
+
+    if (hasDraftData) {
+      const schema = ROLE_SCHEMAS[selectedRole];
+      if (draftRoleLabel) setTextSafe(draftRoleLabel, schema?.title || selectedRole);
+      showDraftBanner();
+    } else {
+      hideDraftBanner();
+    }
+  }
+
+  function showDraftBanner() {
+    draftBanner?.classList.remove('hidden');
+  }
+
+  function hideDraftBanner() {
+    draftBanner?.classList.add('hidden');
+  }
+
+  function restoreDraft() {
+    const draft = loadDraft(selectedRole);
+    if (!draft?.data) return;
+
+    const staticFields = ['discord_tag', 'discord_id', 'age', 'timezone'];
+    staticFields.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && draft.data[id] !== undefined) el.value = draft.data[id];
     });
 
-    // Attach input event listeners to clear invalid classes
-    dynamicContainer.querySelectorAll('input, textarea, select').forEach(el => {
-      el.addEventListener('input', () => el.closest('.form-group')?.classList.remove('invalid'));
-      el.addEventListener('change', () => el.closest('.form-group')?.classList.remove('invalid'));
+    if (draft.data.role) {
+      const radio = document.querySelector(`input[name="role"][value="${draft.data.role}"]`);
+      if (radio) {
+        radio.checked = true;
+        selectedRole = draft.data.role;
+      }
+    }
+
+    renderDynamicSteps(selectedRole);
+    updateNavigation();
+
+    requestAnimationFrame(() => {
+      const schema = ROLE_SCHEMAS[selectedRole];
+      if (schema) {
+        schema.questions.forEach(q => {
+          const el = document.getElementById(q.id);
+          if (!el || draft.data[q.id] === undefined) return;
+          if (el.type === 'checkbox') {
+            el.checked = draft.data[q.id] === 'Yes, I agree';
+          } else {
+            el.value = draft.data[q.id];
+          }
+          updateCharCounter(el, q);
+        });
+      }
+
+      if (typeof draft.data.currentStep === 'number') {
+        currentStep = Math.min(Math.max(draft.data.currentStep, 1), totalSteps);
+        updateNavigation();
+      }
+
+      hideDraftBanner();
     });
   }
 
+  // ── Draft Auto-Save ────────────────────────────────────────
+  function scheduleDraftSave() {
+    clearTimeout(draftSaveTimer);
+    draftSaveTimer = setTimeout(performDraftSave, DRAFT_DEBOUNCE_MS);
+  }
+
+  function performDraftSave() {
+    const data = collectCurrentValues();
+    const hasMeaningfulInput = Object.entries(data).some(([key, value]) => {
+      if (key === 'role' || key === 'currentStep') return true;
+      return typeof value === 'string' ? value.trim().length > 0 : Boolean(value);
+    });
+
+    if (hasMeaningfulInput) {
+      saveDraft(selectedRole, { ...data, currentStep });
+      checkForDrafts();
+    }
+  }
+
+  function collectCurrentValues() {
+    const data = {};
+    data.role = selectedRole;
+    data.currentStep = currentStep;
+
+    const staticFields = ['discord_tag', 'discord_id', 'age', 'timezone'];
+    staticFields.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) data[id] = el.value.trim();
+    });
+
+    const schema = ROLE_SCHEMAS[selectedRole];
+    if (schema) {
+      schema.questions.forEach(q => {
+          const el = form.elements.namedItem(q.id);
+        if (!el) return;
+          data[q.id] = el.type === 'checkbox' ? (el.checked ? 'Yes, I agree' : '') : String(el.value || '').trim();
+      });
+    }
+    return data;
+  }
+
+  // ── Dynamic Step Rendering ─────────────────────────────────
+  function renderDynamicSteps(roleKey) {
+    const schema = ROLE_SCHEMAS[roleKey];
+    dynamicContainer.innerHTML = '';
+
+    const stepMeta = {
+      2: { title: 'Step 2: Role Details & Commitment', desc: 'Provide specific details about your availability and qualifications for the role.' },
+      3: { title: 'Step 3: Background & Motivation', desc: 'Tell us why you want to join and what experiences you bring.' },
+      4: { title: 'Step 4: Scenarios & Decision-Making', desc: 'Describe how you handle specific situations or conflicts.' },
+      5: { title: 'Step 5: Agreement & Miscellaneous', desc: 'Almost done! Review the guidelines and provide any final details.' }
+    };
+
+    [2, 3, 4, 5].forEach(stepNum => {
+      const section = document.createElement('section');
+      section.className = 'form-section';
+      section.dataset.section = stepNum;
+
+      const meta = stepMeta[stepNum];
+      section.innerHTML = `
+        <h2 class="section-title">${meta.title}</h2>
+        <p class="section-description">${meta.desc}</p>
+      `;
+
+      schema.questions
+        .filter(q => q.step === stepNum)
+        .forEach(q => {
+          const group = buildFieldGroup(q);
+          section.appendChild(group);
+        });
+
+      dynamicContainer.appendChild(section);
+    });
+
+    // Attach input listeners to dynamic fields
+    dynamicContainer.querySelectorAll('input, textarea, select').forEach(el => {
+      el.addEventListener('input', () => {
+        el.closest('.form-group')?.classList.remove('invalid');
+        scheduleDraftSave();
+      });
+      el.addEventListener('change', () => {
+        el.closest('.form-group')?.classList.remove('invalid');
+        scheduleDraftSave();
+      });
+    });
+  }
+
+  /**
+   * Build a complete form-group div for a question schema entry.
+   */
+  function buildFieldGroup(q) {
+    const group = document.createElement('div');
+    group.className = 'form-group';
+
+    // Label
+    if (q.type !== 'checkbox') {
+      const label = document.createElement('label');
+      label.setAttribute('for', q.id);
+      label.innerHTML = `${q.label} ${q.required ? '<span class="required">*</span>' : ''}`;
+      group.appendChild(label);
+    } else {
+      const label = document.createElement('label');
+      label.innerHTML = `Agreement <span class="required">*</span>`;
+      group.appendChild(label);
+    }
+
+    // Input element
+    let input;
+    const maxChars = q.maxChars || DEFAULT_MAX_CHARS;
+
+    if (q.type === 'textarea') {
+      input = document.createElement('textarea');
+      input.id = q.id;
+      input.name = q.id;
+      input.rows = 4;
+      input.placeholder = q.placeholder || '';
+      input.maxLength = maxChars;
+      if (q.required) input.required = true;
+
+      // Character counter
+      const counter = document.createElement('div');
+      counter.className = 'char-counter';
+      counter.id = `counter-${q.id}`;
+      counter.textContent = `0 / ${maxChars}`;
+      group.appendChild(input);
+      group.appendChild(counter);
+
+      input.addEventListener('input', () => updateCharCounter(input, q));
+
+    } else if (q.type === 'text') {
+      input = document.createElement('input');
+      input.type = 'text';
+      input.id = q.id;
+      input.name = q.id;
+      input.placeholder = q.placeholder || '';
+      if (q.required) input.required = true;
+      group.appendChild(input);
+
+    } else if (q.type === 'number') {
+      input = document.createElement('input');
+      input.type = 'number';
+      input.id = q.id;
+      input.name = q.id;
+      input.placeholder = q.placeholder || '';
+      if (q.min !== undefined) input.min = q.min;
+      if (q.max !== undefined) input.max = q.max;
+      if (q.required) input.required = true;
+      group.appendChild(input);
+
+    } else if (q.type === 'select') {
+      input = document.createElement('select');
+      input.id = q.id;
+      input.name = q.id;
+      if (q.required) input.required = true;
+      q.options.forEach(opt => {
+        const option = document.createElement('option');
+        option.value = opt;
+        option.textContent = opt;
+        input.appendChild(option);
+      });
+      group.appendChild(input);
+
+    } else if (q.type === 'checkbox') {
+      const wrapper = document.createElement('label');
+      wrapper.className = 'checkbox-container';
+      wrapper.setAttribute('for', q.id);
+
+      input = document.createElement('input');
+      input.type = 'checkbox';
+      input.id = q.id;
+      input.name = q.id;
+      input.value = 'Yes, I agree';
+      if (q.required) input.required = true;
+
+      const checkmark = document.createElement('span');
+      checkmark.className = 'checkmark';
+
+      const checkLabel = document.createElement('span');
+      checkLabel.className = 'checkbox-label';
+      checkLabel.textContent = q.checkboxLabel || '';
+
+      wrapper.appendChild(input);
+      wrapper.appendChild(checkmark);
+      wrapper.appendChild(checkLabel);
+      group.appendChild(wrapper);
+    }
+
+    // Error message
+    const errSpan = document.createElement('span');
+    errSpan.className = 'error-msg';
+    errSpan.id = `error-${q.id}`;
+    errSpan.textContent = q.type === 'checkbox' ? 'You must agree to continue.' : 'Please fill out this field.';
+    group.appendChild(errSpan);
+
+    // Helper text
+    if (q.helperText) {
+      const helper = document.createElement('small');
+      helper.className = 'helper-text';
+      helper.textContent = q.helperText;
+      group.appendChild(helper);
+    }
+
+    return group;
+  }
+
+  // ── Character Counter Update ───────────────────────────────
+  function updateCharCounter(textarea, q) {
+    const maxChars = q.maxChars || DEFAULT_MAX_CHARS;
+    const counter = document.getElementById(`counter-${q.id}`);
+    if (!counter) return;
+
+    const len = textarea.value.length;
+    const ratio = len / maxChars;
+
+    counter.textContent = `${len.toLocaleString()} / ${maxChars.toLocaleString()}`;
+    counter.classList.remove('char-counter--warn', 'char-counter--danger');
+
+    if (ratio >= 0.95) counter.classList.add('char-counter--danger');
+    else if (ratio >= 0.75) counter.classList.add('char-counter--warn');
+  }
+
+  // ── Navigation Update ──────────────────────────────────────
   function updateNavigation() {
-    const currentSections = document.querySelectorAll('.form-section');
-    currentSections.forEach(s => s.classList.toggle('active', parseInt(s.dataset.section) === currentStep));
+    document.querySelectorAll('.form-section').forEach(s => {
+      s.classList.toggle('active', parseInt(s.dataset.section) === currentStep);
+    });
+
     stepNodes.forEach(n => {
       const step = parseInt(n.dataset.step);
       n.classList.remove('active', 'completed');
       if (step === currentStep) n.classList.add('active');
       else if (step < currentStep) n.classList.add('completed');
     });
-    progressBar.style.width = `${((currentStep - 1) / (totalSteps - 1)) * 100}%`;
+
+    const pct = ((currentStep - 1) / (totalSteps - 1)) * 100;
+    progressBar.style.width = `${pct}%`;
+
     prevBtn.classList.toggle('disabled', currentStep === 1);
     prevBtn.disabled = currentStep === 1;
     nextBtn.classList.toggle('hidden', currentStep === totalSteps);
     submitBtn.classList.toggle('hidden', currentStep !== totalSteps);
-    document.querySelector('.form-card').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+
+    document.querySelector('.form-card')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
+  // ── Validation ─────────────────────────────────────────────
   function validateStep(step) {
     const section = document.querySelector(`.form-section[data-section="${step}"]`);
     if (!section) return true;
     let isValid = true;
+
     section.querySelectorAll('input, textarea, select').forEach(input => {
+      // Skip honeypot field — it should always be empty
+      if (input.id === 'hp_field') return;
+
       const group = input.closest('.form-group');
       let fieldValid = true;
+
       if (input.hasAttribute('required')) {
         fieldValid = input.type === 'checkbox' ? input.checked : input.value.trim() !== '';
       }
+
+      // Additional field-level validation
       if (fieldValid) {
-        if (input.id === 'discord_id') fieldValid = /^\d{17,19}$/.test(input.value.trim());
-        else if (input.id === 'age') { const v = parseInt(input.value); fieldValid = !isNaN(v) && v >= 13 && v <= 100; }
-        else if (input.id === 'hours_active') { const v = parseInt(input.value); fieldValid = !isNaN(v) && v >= 1 && v <= 168; }
+        if (input.id === 'discord_id') {
+          fieldValid = /^\d{17,19}$/.test(input.value.trim());
+        } else if (input.id === 'age') {
+          const v = parseInt(input.value, 10);
+          fieldValid = !isNaN(v) && v >= 13 && v <= 100;
+        } else if (input.id === 'hours_active') {
+          const v = parseInt(input.value, 10);
+          fieldValid = !isNaN(v) && v >= 1 && v <= 168;
+        }
       }
+
       group?.classList.toggle('invalid', !fieldValid);
       if (!fieldValid) isValid = false;
     });
+
     return isValid;
   }
 
-  form.addEventListener('submit', async (e) => {
+  // ── Form Submission ────────────────────────────────────────
+  form.addEventListener('submit', async e => {
     e.preventDefault();
+    if (isSubmitting) return;
     if (!validateStep(currentStep)) return;
 
+    // Honeypot check — real users won't fill this
+    const honeypot = document.getElementById('hp_field');
+    if (honeypot && honeypot.value.trim() !== '') {
+      // Silently succeed for bots (don't reveal detection)
+      showSuccess('APP-BOT-00000');
+      return;
+    }
+
+
     const schema = ROLE_SCHEMAS[selectedRole];
+
+    // Collect payload
     const payload = {
       role: selectedRole,
-      role_title: schema.title
+      role_title: schema.title,
+      discord_tag: document.getElementById('discord_tag').value.trim(),
+      discord_id: document.getElementById('discord_id').value.trim(),
+      age: document.getElementById('age').value.trim(),
+      timezone: document.getElementById('timezone').value.trim()
     };
 
-    // Static fields
-    payload.discord_tag = document.getElementById('discord_tag').value.trim();
-    payload.discord_id = document.getElementById('discord_id').value.trim();
-    payload.age = document.getElementById('age').value.trim();
-    payload.timezone = document.getElementById('timezone').value.trim();
-
-    // Dynamic fields
     schema.questions.forEach(q => {
-      const el = document.getElementById(q.id);
+      const el = form.elements.namedItem(q.id);
       if (el) {
-        payload[q.id] = el.type === 'checkbox' ? (el.checked ? 'Yes, I agree' : '') : el.value.trim();
+        payload[q.id] = el.type === 'checkbox' ? (el.checked ? 'Yes, I agree' : '') : String(el.value || '').trim();
       }
     });
 
-    // Show loading
+    // Duplicate ID check (warn, but don't hard-block)
+    if (isDuplicateId(payload.discord_id)) {
+      const proceed = confirm(
+        `Warning: A previous application was already submitted from this browser with the Discord ID "${payload.discord_id}".\n\nDo you want to submit again anyway?`
+      );
+      if (!proceed) return;
+    }
+
+    // Generate Application ID
+    const appId = generateAppId();
+    payload.app_id = appId;
+
+    // Show loading state
+    isSubmitting = true;
     form.classList.add('hidden');
-    document.querySelector('.progress-container').classList.add('hidden');
+    document.querySelector('.progress-container')?.classList.add('hidden');
     statusCard.classList.remove('hidden');
     statusIconSuccess.classList.add('hidden');
     statusIconError.classList.add('hidden');
-    statusTitle.innerText = 'Submitting…';
-    statusMessage.innerText = 'Sending your application to Discord. Please wait.';
+    setTextSafe(statusTitle, 'Submitting…');
+    setTextSafe(statusMessage, 'Sending your application to the staff review room. Please wait…');
     statusResetBtn.classList.add('hidden');
 
     try {
-      // Build review URL (for the Approve/Reject links in the embed)
-      const reviewBase = window.location.origin + window.location.pathname.replace('index.html', '') + 'review.html';
+      // Build review URL
+      const reviewBase = buildReviewBaseUrl();
       const jsonStr = JSON.stringify(payload);
       let answersParam = encodeURIComponent(jsonStr);
 
       if (typeof CompressionStream !== 'undefined') {
         const compressed = await compressPayload(jsonStr);
-        if (compressed) {
-          answersParam = 'c:' + compressed;
-        }
+        if (compressed) answersParam = 'c:' + compressed;
       }
 
       const encodedTag = encodeURIComponent(payload.discord_tag);
-      const approveUrl = `${reviewBase}?action=approve&tag=${encodedTag}&answers=${answersParam}`;
-      const rejectUrl = `${reviewBase}?action=reject&tag=${encodedTag}&answers=${answersParam}`;
+      const baseUrl = reviewBase ? `${reviewBase}?tag=${encodedTag}&answers=${answersParam}` : null;
+      const approveUrl = baseUrl ? `${baseUrl}&action=approve` : null;
+      const rejectUrl = baseUrl ? `${baseUrl}&action=reject` : null;
 
-      // Format field helper with truncation
-      const formatEmbedValue = (val, maxLen = 300) => {
-        const text = val || 'N/A';
-        if (text.length <= maxLen) return text;
-        return text.substring(0, maxLen) + '... *(truncated, view full answer in portal)*';
-      };
-
-      // Safe value helper — Discord rejects empty-string field values
-      const safeVal = (v) => (v !== undefined && v !== null && String(v).trim() !== '') ? String(v).trim() : 'N/A';
-
-      // Profile fields
+      // Profile embed fields
       const profileFields = [
-        { name: 'Applied Role',        value: safeVal(schema.title),         inline: true },
-        { name: 'Discord Username',    value: safeVal(payload.discord_tag),  inline: true },
-        { name: 'Discord User ID',     value: `\`${safeVal(payload.discord_id)}\``, inline: true },
-        { name: 'Age',                 value: safeVal(payload.age),          inline: true },
-        { name: 'Timezone / Country',  value: safeVal(payload.timezone),     inline: true },
-        { name: 'Hours / Week',        value: payload.hours_active ? `${payload.hours_active} hrs` : 'N/A', inline: true }
+        { name: '🆔 Application ID', value: `\`${appId}\``, inline: true },
+        { name: '📋 Applied Role', value: safeVal(schema.title), inline: true },
+        { name: '💬 Discord Username', value: safeVal(payload.discord_tag), inline: true },
+        { name: '🔢 Discord User ID', value: `\`${safeVal(payload.discord_id)}\``, inline: true },
+        { name: '🎂 Age', value: safeVal(payload.age), inline: true },
+        { name: '🌍 Timezone / Country', value: safeVal(payload.timezone), inline: true },
+        { name: '⏱️ Hours / Week', value: payload.hours_active ? `${payload.hours_active} hrs` : 'N/A', inline: true },
       ];
 
-      // Add sub-role if applicable
-      if (payload.media_role) {
-        profileFields.push({ name: 'Specialization', value: payload.media_role, inline: true });
-      } else if (payload.dev_role) {
-        profileFields.push({ name: 'Developer Role', value: payload.dev_role, inline: true });
-      }
+      if (payload.media_role) profileFields.push({ name: 'Specialization', value: payload.media_role, inline: true });
+      if (payload.portfolio) profileFields.push({ name: 'Portfolio', value: payload.portfolio, inline: true });
 
-      // Add portfolio or profile links if they exist
-      if (payload.portfolio) {
-        profileFields.push({ name: 'Portfolio / Past Work', value: payload.portfolio, inline: true });
-      }
-      if (payload.roblox_profile) {
-        profileFields.push({ name: 'Roblox Profile', value: payload.roblox_profile, inline: true });
-      }
-
-      // Embed 1: Applicant Profile & Actions
-      const embedProfile = {
-        title: `📝 New Application — ${payload.discord_tag}`,
-        description:
-          `A new application has been submitted for the **${schema.title}**. Review the details below or open the review portal to make a decision.\n\n` +
-          `⚡ **Review Actions:**\n` +
+      // Build the single application embed. Discord allows up to 25 fields per embed.
+      const reviewActionText = baseUrl
+        ? `**Review actions:**\n` +
           `• [🟢 Open Portal & Approve](${approveUrl})\n` +
-          `• [🔴 Open Portal & Reject](${rejectUrl})`,
-        color: 5793266, // Discord Blurple
-        fields: profileFields,
+          `• [🔴 Open Portal & Reject](${rejectUrl})`
+        : `**Review note:** Open the app from a hosted web URL to approve or reject this application.`;
+
+      const skipKeys = ['hours_active', 'media_role', 'portfolio', 'guidelines_agree'];
+      const detailQs = schema.questions.filter(q => !skipKeys.includes(q.id));
+
+      const questionFields = detailQs.map((q, i) => ({
+        name: `${i + 1}. ${q.label}`,
+        value: formatEmbedValue(payload[q.id]),
+        inline: false
+      }));
+
+      const embed = {
+        author: {
+          name: 'aerogrowth • Staff Intake',
+          icon_url: 'https://cdn.discordapp.com/embed/avatars/1.png'
+        },
+        title: `📝 New ${schema.title} Application • ${payload.discord_tag}`,
+        description:
+          `A new **${schema.title}** application has been submitted for review.\n\n` +
+          reviewActionText,
+        color: schema.color || 0x6C63FF,
+        fields: [...profileFields, ...questionFields],
+        footer: { text: `Application ID: ${appId} • ${CONFIG.SERVER_NAME}` },
         timestamp: new Date().toISOString()
       };
 
-      // Filter Q&As to exclude profile fields
-      const profileKeys = ['hours_active', 'media_role', 'dev_role', 'roblox_profile', 'portfolio', 'guidelines_agree'];
-      const detailQuestions = schema.questions.filter(q => !profileKeys.includes(q.id));
-
-      const halfCount = Math.ceil(detailQuestions.length / 2);
-      const qa1Questions = detailQuestions.slice(0, halfCount);
-      const qa2Questions = detailQuestions.slice(halfCount);
-
-      // Embed 2: Detailed QA part 1
-      const embedQA1 = {
-        title: '📋 Part 1: Applicant Details & Background',
-        color: 3092790, // Dark Grey
-        fields: qa1Questions.map((q, idx) => ({
-          name: `${idx + 6}. ${q.label}`,
-          value: formatEmbedValue(payload[q.id]),
-          inline: false
-        }))
+      const webhookBody = {
+        username: 'aerogrowth • Staff Intake',
+        avatar_url: 'https://cdn.discordapp.com/embed/avatars/2.png',
+        embeds: [embed],
       };
 
-      // Embed 3: Detailed QA part 2
-      const embedQA2 = {
-        title: '⚖️ Part 2: Scenarios & Additional Info',
-        color: 3092790, // Dark Grey
-        fields: qa2Questions.map((q, idx) => ({
-          name: `${idx + 6 + halfCount}. ${q.label}`,
-          value: formatEmbedValue(payload[q.id]),
-          inline: false
-        })),
-        footer: { text: 'Click review links in the first embed to submit a decision' }
-      };
-
-        // Helper to build webhook payload
-        function buildWebhookPayload() {
-          const embeds = [embedProfile];
-          if (embedQA1.fields.length > 0) embeds.push(embedQA1);
-          if (embedQA2.fields.length > 0) embeds.push(embedQA2);
-          // Add footer to the first embed with Discord invite link
-          embeds[0].footer = { text: 'Join our Discord: https://discord.gg/yNgeQmmnWs' };
-          return {
-            username: 'Staff Application System',
-            embeds,
-            components: [
-              {
-                type: 1, // Action Row
-                components: [
-                  { type: 2, style: 5, label: '✅ Approve', url: approveUrl, emoji: { name: '✅' } },
-                  { type: 2, style: 5, label: '❌ Reject', url: rejectUrl, emoji: { name: '❌' } },
-                  { type: 2, style: 5, label: '💬 Join Discord', url: 'https://discord.gg/yNgeQmmnWs', emoji: { name: '💬' } }
-                ]
-              }
-            ]
-          };
-        }
-
-        // Send webhook with retry logic (defined earlier in the file)
-        const webhookBody = buildWebhookPayload();
-        const resp = await sendWithRetry(webhookBody);
+      const resp = await sendWithRetry(CONFIG.WEBHOOK_URL, webhookBody);
 
       if (resp.ok || resp.status === 204) {
-        statusTitle.innerText = 'Application Submitted!';
-        statusMessage.innerText = 'Your application was sent to the staff review room successfully. You will be notified on Discord once a decision is made!';
-        statusIconSuccess.classList.remove('hidden');
+        // Record anti-spam data
+        recordCooldown();
+        recordSubmittedId(payload.discord_id);
+
+        // Record to local dashboard history
+        recordSubmission({
+          appId,
+          discordTag: payload.discord_tag,
+          discordId: payload.discord_id,
+          role: selectedRole,
+          roleTitle: schema.title,
+          status: 'pending'
+        });
+
+        // Clear draft on success
+        clearDraft(selectedRole);
+
+        showSuccess(appId);
       } else {
         const err = await resp.text();
         throw new Error(`Discord returned ${resp.status}: ${err}`);
       }
+
     } catch (error) {
-      statusTitle.innerText = 'Submission Failed';
-      statusMessage.innerText = error.message || 'Could not send your application. Please try again later.';
+      isSubmitting = false;
       statusIconError.classList.remove('hidden');
+      setTextSafe(statusTitle, 'Submission Failed');
+      setTextSafe(statusMessage, error.message || 'Could not send your application. Please check your connection and try again.');
       statusResetBtn.classList.remove('hidden');
     }
   });
 
+  function showSuccess(appId) {
+    statusIconSuccess.classList.remove('hidden');
+    setTextSafe(statusTitle, 'Application Submitted! 🎉');
+    setTextSafe(statusMessage, 'Your application was sent to the staff review room. You will be notified on Discord once a decision is made.');
+  }
+
+  // ── Reset Button ───────────────────────────────────────────
   statusResetBtn.addEventListener('click', () => {
+    isSubmitting = false;
     statusCard.classList.add('hidden');
-    document.querySelector('.progress-container').classList.remove('hidden');
+    document.querySelector('.progress-container')?.classList.remove('hidden');
     form.classList.remove('hidden');
     currentStep = 1;
     updateNavigation();

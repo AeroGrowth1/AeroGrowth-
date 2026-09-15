@@ -3,445 +3,485 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Staff Application Review Portal</title>
-  <!-- Google Fonts -->
+  <meta name="description" content="Staff Application Review Portal — aerogrowth">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Review Portal — aerogrowth Staff Applications</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <!-- Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=2">
-  <style>
-    .review-detail-card {
-      margin-top: 20px;
-      background: var(--bg-tertiary);
-      border-radius: 6px;
-      padding: 24px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      max-height: 450px;
-      overflow-y: auto;
-      margin-bottom: 24px;
-    }
-    .qa-item {
-      margin-bottom: 18px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-      padding-bottom: 12px;
-    }
-    .qa-item:last-child {
-      border-bottom: none;
-      padding-bottom: 0;
-      margin-bottom: 0;
-    }
-    .qa-question {
-      font-weight: 700;
-      color: #ffffff;
-      font-size: 0.95rem;
-      margin-bottom: 4px;
-    }
-    .qa-answer {
-      color: var(--text-normal);
-      font-size: 0.9rem;
-      white-space: pre-wrap;
-    }
-    .status-badge {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 4px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      margin-top: 8px;
-    }
-    .status-pending { background-color: var(--blurple); color: #ffffff; }
-    .status-approved { background-color: var(--green-success); color: #ffffff; }
-    .status-rejected { background-color: var(--red-danger); color: #ffffff; }
-  </style>
+  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 127.14 96.36'%3E%3Cpath fill='%235865F2' d='M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C3.66,31.58-1.86,54.65,1,77.53A105.73,105.73,0,0,0,32,96.36a77.7,77.7,0,0,0,6.63-10.85,68.43,68.43,0,0,1-10.4-5c.89-.65,1.76-1.34,2.58-2.07a75.14,75.14,0,0,0,72.57,0c.82.73,1.69,1.42,2.58,2.07a68.43,68.43,0,0,1-10.4,5,77.7,77.7,0,0,0,6.63,10.85,105.73,105.73,0,0,0,31-18.83C129,54.65,123.5,31.58,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53S36.18,40.36,42.45,40.36,53.83,46,53.83,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53S78.41,40.36,84.69,40.36,96.07,46,96.07,53,91,65.69,84.69,65.69Z'/%3E%3C/svg%3E">
 </head>
 <body>
-
-  <!-- Background Decorative Orbs -->
   <div class="decor-orb orb-1"></div>
   <div class="decor-orb orb-2"></div>
 
-  <div class="app-container">
+  <div class="app-container review-container">
     <header class="app-header">
-      <h1 id="app-title">Staff Review Portal</h1>
-      <p id="app-subtitle">Review applicant details and confirm decision.</p>
+      <div class="logo-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36" width="40" height="30" class="discord-logo" aria-hidden="true">
+          <path fill="currentColor" d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C3.66,31.58-1.86,54.65,1,77.53A105.73,105.73,0,0,0,32,96.36a77.7,77.7,0,0,0,6.63-10.85,68.43,68.43,0,0,1-10.4-5c.89-.65,1.76-1.34,2.58-2.07a75.14,75.14,0,0,0,72.57,0c.82.73,1.69,1.42,2.58,2.07a68.43,68.43,0,0,1-10.4,5,77.7,77.7,0,0,0,6.63,10.85,105.73,105.73,0,0,0,31-18.83C129,54.65,123.5,31.58,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53S36.18,40.36,42.45,40.36,53.83,46,53.83,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53S78.41,40.36,84.69,40.36,96.07,46,96.07,53,91,65.69,84.69,65.69Z"/>
+        </svg>
+      </div>
+      <h1>Staff Review Portal</h1>
+      <p id="app-subtitle">Review applicant details and submit your decision.</p>
     </header>
 
-    <main class="form-card">
-      
+    <!-- Keyboard shortcut hints -->
+    <div class="keyboard-hints hidden" id="keyboard-hints">
+      <span class="kbd-hint"><kbd>A</kbd> Approve</span>
+      <span class="kbd-hint"><kbd>R</kbd> Reject</span>
+      <span class="kbd-hint"><kbd>N</kbd> Focus Notes</span>
+      <span class="kbd-hint"><kbd>Esc</kbd> Back</span>
+    </div>
+
+    <main class="form-card review-card">
+
       <!-- Loading State -->
       <div id="loading-view" class="status-card">
-        <h3 style="margin-bottom: 0;">Loading Application Details...</h3>
+        <div class="loading-spinner"></div>
+        <h3 style="margin-top:16px;">Loading Application…</h3>
       </div>
 
-      <!-- Main Review Form -->
+      <!-- Main Review View -->
       <div id="review-view" class="hidden">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 16px;">
-          <div>
-            <h2 id="applicant-name" style="color: #ffffff; font-size: 1.5rem; font-weight: 800;">Username</h2>
-            <p id="applicant-id" style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">User ID: 0000000</p>
-          </div>
-          <div>
-            <span id="application-status" class="status-badge status-pending">Decision Pending</span>
-          </div>
-        </div>
 
-        <div class="review-detail-card" id="answers-container">
-          <!-- Dynamically populated Q&A list -->
-        </div>
-
-        <!-- Action Box -->
-        <div id="action-box">
-          <form id="decision-form" onsubmit="return false;">
-            <div class="form-group">
-              <label for="reviewer_name">Your Name / Discord Tag <span class="required">*</span></label>
-              <input type="text" id="reviewer_name" placeholder="e.g. Administrator" required>
-              <span class="error-msg" id="error-reviewer_name">Please enter your name to authenticate.</span>
-              <small class="helper-text">Your name will be logged in the Discord webhook notification.</small>
+        <!-- Applicant Header -->
+        <div class="review-header">
+          <div class="review-applicant-info">
+            <div class="review-avatar" id="review-avatar" aria-hidden="true">?</div>
+            <div>
+              <h2 id="applicant-name">Username</h2>
+              <p id="applicant-id" class="review-meta-id">User ID: 0000000</p>
+              <p id="applicant-app-id" class="review-meta-appid"></p>
             </div>
-
-            <div style="display: flex; gap: 16px; margin-top: 24px; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 24px;">
-              <button type="button" id="approve-btn" class="nav-btn btn-success" style="flex: 1;">Approve Application</button>
-              <button type="button" id="reject-btn" class="nav-btn btn-danger" style="flex: 1;">Reject Application</button>
-            </div>
-          </form>
+          </div>
+          <div class="review-header-badges">
+            <span id="role-badge" class="role-badge"></span>
+            <span id="application-status" class="status-pill status-pending">Pending Review</span>
+          </div>
         </div>
-      </div>
 
-      <!-- Status Screen (Success/Error feedback) -->
+        <!-- 5-Stage Pipeline Selector -->
+        <div class="pipeline-section">
+          <label class="pipeline-label">Application Stage</label>
+          <div class="pipeline" id="status-pipeline" role="group" aria-label="Application status stages">
+            <button type="button" class="pipeline-stage active" data-status="pending"      aria-label="Set status to Pending Review">🕐 Pending</button>
+            <button type="button" class="pipeline-stage"        data-status="under_review" aria-label="Set status to Under Review">🔍 Under Review</button>
+            <button type="button" class="pipeline-stage"        data-status="interview"    aria-label="Set status to Interview">🎤 Interview</button>
+            <button type="button" class="pipeline-stage"        data-status="accepted"     aria-label="Set status to Accepted">✅ Accepted</button>
+            <button type="button" class="pipeline-stage"        data-status="rejected"     aria-label="Set status to Rejected">❌ Rejected</button>
+          </div>
+        </div>
+
+        <!-- Application Answers -->
+        <div class="review-answers-wrapper">
+          <div class="review-answers-header">
+            <h3 class="review-section-label">Application Answers</h3>
+            <button type="button" id="expand-all-btn" class="btn-text-action">Expand All</button>
+          </div>
+          <div class="review-detail-card" id="answers-container">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <!-- Reviewer Action Box -->
+        <div class="action-box" id="action-box">
+          <h3 class="review-section-label">Reviewer Decision</h3>
+
+          <div class="form-group">
+            <label for="reviewer_name">Your Name / Discord Tag <span class="required">*</span></label>
+            <input type="text" id="reviewer_name" placeholder="e.g. Administrator" required autocomplete="off">
+            <span class="error-msg" id="error-reviewer_name">Please enter your name.</span>
+            <small class="helper-text">Your name will appear in the Discord decision notification.</small>
+          </div>
+
+          <!-- Reviewer Notes -->
+          <div class="form-group">
+            <label for="reviewer_notes">Private Notes <span class="notes-optional">(optional)</span></label>
+            <textarea id="reviewer_notes" rows="3" placeholder="Add private notes about this applicant… (included in Discord notification)" maxlength="800"></textarea>
+            <div class="char-counter" id="counter-reviewer_notes">0 / 800</div>
+          </div>
+
+          <!-- Decision Buttons -->
+          <div class="decision-actions">
+            <button type="button" id="approve-btn" class="nav-btn btn-success decision-btn" aria-label="Approve application (keyboard: A)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              Approve
+            </button>
+            <button type="button" id="reject-btn" class="nav-btn btn-danger decision-btn" aria-label="Reject application (keyboard: R)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              Reject
+            </button>
+          </div>
+        </div>
+
+        <!-- Reviewer Activity Log -->
+        <div class="activity-log-section" id="activity-log-section">
+          <h3 class="review-section-label">Recent Review Activity</h3>
+          <div class="activity-log" id="activity-log">
+            <p class="activity-empty">No review activity recorded yet.</p>
+          </div>
+        </div>
+
+      </div><!-- /#review-view -->
+
+      <!-- Status / Feedback Screen -->
       <div id="status-view" class="status-card hidden">
-        <div class="status-icon success-icon" id="status-icon-success">
-          <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        <div class="status-icon success-icon hidden" id="status-icon-success">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
         </div>
-        <div class="status-icon error-icon" id="status-icon-error">
-          <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+        <div class="status-icon error-icon hidden" id="status-icon-error">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
         </div>
         <h3 id="status-title">Decision Submitted</h3>
         <p id="status-message">The action was processed successfully.</p>
-        <button type="button" id="status-back-btn" class="nav-btn btn-primary hidden" style="margin-top: 16px;">Back to Review</button>
+        <button type="button" id="status-back-btn" class="nav-btn btn-primary hidden" style="margin-top:16px;">← Back to Review</button>
       </div>
 
     </main>
 
     <footer class="app-footer">
-      <a href="https://discord.gg/yNgeQmmnWs" target="_blank" rel="noopener noreferrer" class="discord-join-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36" width="16" height="16"><path fill="currentColor" d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C3.66,31.58-1.86,54.65,1,77.53A105.73,105.73,0,0,0,32,96.36a77.7,77.7,0,0,0,6.63-10.85,68.43,68.43,0,0,1-10.4-5c.89-.65,1.76-1.34,2.58-2.07a75.14,75.14,0,0,0,72.57,0c.82.73,1.69,1.42,2.58,2.07a68.43,68.43,0,0,1-10.4,5,77.7,77.7,0,0,0,6.63,10.85,105.73,105.73,0,0,0,31-18.83C129,54.65,123.5,31.58,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53S36.18,40.36,42.45,40.36,53.83,46,53.83,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53S78.41,40.36,84.69,40.36,96.07,46,96.07,53,91,65.69,84.69,65.69Z"/></svg>
-        Join our Discord
-      </a>
-      <p>&copy; 2026 |ROP| Right Order Party &mdash; Review Dashboard</p>
+      <div class="footer-links">
+        <a href="index.html" class="footer-link">Application Form</a>
+        <a href="dashboard.html" class="footer-link">Dashboard</a>
+        <a href="https://discord.gg/EeA7zbjpM3" target="_blank" rel="noopener noreferrer" class="discord-join-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M107.7,8.07A105.15,105.15,0,0,0,77.26,0a77.19,77.19,0,0,0-3.3,6.83A96.67,96.67,0,0,0,53.22,6.83,77.19,77.19,0,0,0,49.88,0,105.15,105.15,0,0,0,19.44,8.07C3.66,31.58-1.86,54.65,1,77.53A105.73,105.73,0,0,0,32,96.36a77.7,77.7,0,0,0,6.63-10.85,68.43,68.43,0,0,1-10.4-5c.89-.65,1.76-1.34,2.58-2.07a75.14,75.14,0,0,0,72.57,0c.82.73,1.69,1.42,2.58,2.07a68.43,68.43,0,0,1-10.4,5,77.7,77.7,0,0,0,6.63,10.85,105.73,105.73,0,0,0,31-18.83C129,54.65,123.5,31.58,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53S36.18,40.36,42.45,40.36,53.83,46,53.83,53,48.72,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.24,60,73.24,53S78.41,40.36,84.69,40.36,96.07,46,96.07,53,91,65.69,84.69,65.69Z"/></svg>
+          Join Discord
+        </a>
+      </div>
+      <div class="footer-meta">
+        <span class="meta-pill">Live Queue</span>
+        <span class="meta-pill">Staff Review</span>
+        <span class="meta-pill">Secure Access</span>
+      </div>
+      <p class="footer-brand">&copy; 2026 aerogrowth &mdash; Review Dashboard</p>
     </footer>
   </div>
 
+  <script src="schemas.js"></script>
+  <script src="utils.js"></script>
   <script>
-    // ============================================================
-    // CONFIGURATION — Edit these values for your Discord server
-    // ============================================================
-    const CONFIG = {
-      WEBHOOK_URL: 'https://discord.com/api/webhooks/1508490753784152229/2wKdOZuCETLKraReRhbHuCkWFJ0B7OsB690dzcSaMF_dxruSjjoG_ScyYdmxJg3kxBvL',
-      SERVER_NAME: 'Our Discord Server'
-    };
-    // ============================================================
+  // ============================================================
+  // review.html — Review Portal Logic
+  // ============================================================
+  const REVIEW_CONFIG = {
+    WEBHOOK_URL: 'https://discord.com/api/webhooks/1549381519670247534/OfCuGQpWqXXDG51Z9rYurHP1ojHLiAax3abCl-RNtZI3OmQ7nz-g0zbaR9CWRLUlz_p0',
+    SERVER_NAME: 'aerogrowth'
+  };
 
-    // Decompress a URL-safe Base64 compressed string back into a JSON string
-    async function decompressPayload(base64) {
+  // ── Notes persistence (keyed by app_id) ─────────────────────
+  function loadNotes(appId) {
+    try { return JSON.parse(localStorage.getItem(`rop_notes_${appId}`) || 'null') || ''; }
+    catch (_) { return ''; }
+  }
+  function saveNotes(appId, notes) {
+    try { localStorage.setItem(`rop_notes_${appId}`, JSON.stringify(notes)); }
+    catch (_) {}
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    const params       = new URLSearchParams(window.location.search);
+    const actionParam  = params.get('action');
+    const rawAnswers   = params.get('answers');
+    const tagParam     = params.get('tag') || 'Unknown Applicant';
+
+    const loadingView  = document.getElementById('loading-view');
+    const reviewView   = document.getElementById('review-view');
+    const statusView   = document.getElementById('status-view');
+
+    const reviewerNameInput = document.getElementById('reviewer_name');
+    const reviewerNotesInput= document.getElementById('reviewer_notes');
+    const approveBtn   = document.getElementById('approve-btn');
+    const rejectBtn    = document.getElementById('reject-btn');
+    const statusBackBtn= document.getElementById('status-back-btn');
+    const notesCounter = document.getElementById('counter-reviewer_notes');
+    const pipeline     = document.getElementById('status-pipeline');
+    const statusPill   = document.getElementById('application-status');
+    const kbHints      = document.getElementById('keyboard-hints');
+
+    let currentStatus = 'pending';
+    let parsedAnswers = null;
+    let schema        = null;
+    let appId         = null;
+
+    // ── Parse answers from URL ────────────────────────────────
+    try {
+      if (rawAnswers) {
+        const decoded = decodeURIComponent(rawAnswers);
+        if (decoded.startsWith('c:')) {
+          const decompressed = await decompressPayload(decoded.substring(2));
+          if (decompressed) parsedAnswers = JSON.parse(decompressed);
+        } else {
+          parsedAnswers = JSON.parse(decoded);
+        }
+      }
+    } catch (e) { console.error('Failed to parse answers', e); }
+
+    if (!parsedAnswers) {
+      showError('Invalid Link', 'No valid application data found in this URL. Make sure you clicked the correct link from Discord.');
+      return;
+    }
+
+    appId  = parsedAnswers.app_id || null;
+    const selectedRole = parsedAnswers.role || 'discord_staff';
+    schema = ROLE_SCHEMAS[selectedRole];
+
+    // ── Populate header ───────────────────────────────────────
+    const nameEl = document.getElementById('applicant-name');
+    const idEl   = document.getElementById('applicant-id');
+    const appIdEl= document.getElementById('applicant-app-id');
+    const avatar = document.getElementById('review-avatar');
+    const roleBadge = document.getElementById('role-badge');
+    const subtitle  = document.getElementById('app-subtitle');
+
+    setTextSafe(nameEl, parsedAnswers.discord_tag || tagParam);
+    setTextSafe(idEl,   `Discord ID: ${parsedAnswers.discord_id || 'N/A'}`);
+    if (appId) setTextSafe(appIdEl, `Application ID: ${appId}`);
+    if (avatar) setTextSafe(avatar, (parsedAnswers.discord_tag || '?')[0].toUpperCase());
+
+    if (schema) {
+      setTextSafe(subtitle, `Reviewing application for: ${schema.title}`);
+      roleBadge.textContent = schema.icon + ' ' + schema.title;
+      roleBadge.className   = `role-badge role-badge--${selectedRole}`;
+    }
+
+    // Pre-select status from URL action param
+    if (actionParam === 'approve') setStatus('accepted');
+    else if (actionParam === 'reject') setStatus('rejected');
+    else setStatus('pending');
+
+    // ── Restore reviewer name + notes ─────────────────────────
+    const savedName = localStorage.getItem('reviewer_name');
+    if (savedName) reviewerNameInput.value = savedName;
+    if (appId) reviewerNotesInput.value = loadNotes(appId);
+
+    // ── Notes character counter ───────────────────────────────
+    reviewerNotesInput.addEventListener('input', () => {
+      const len = reviewerNotesInput.value.length;
+      if (notesCounter) {
+        notesCounter.textContent = `${len} / 800`;
+        notesCounter.classList.toggle('char-counter--warn',   len >= 600 && len < 760);
+        notesCounter.classList.toggle('char-counter--danger', len >= 760);
+      }
+      if (appId) saveNotes(appId, reviewerNotesInput.value);
+    });
+
+    // ── Build Q&A list ────────────────────────────────────────
+    const staticQs = [
+      { id: 'discord_tag', label: 'Discord Username' },
+      { id: 'discord_id',  label: 'Discord User ID' },
+      { id: 'age',         label: 'Age' },
+      { id: 'timezone',    label: 'Timezone / Country' }
+    ];
+    const allQs = schema ? [...staticQs, ...schema.questions] : staticQs;
+    const container = document.getElementById('answers-container');
+    container.innerHTML = '';
+
+    allQs.forEach((q, idx) => {
+      const val = parsedAnswers[q.id];
+      if (val === undefined || val === null) return;
+      const displayVal = (q.type === 'checkbox')
+        ? (val === 'Yes, I agree' ? '✅ Agreed' : '❌ Not agreed')
+        : String(val).trim() || '—';
+
+      const item = document.createElement('div');
+      item.className = 'qa-item';
+
+      const questionEl = document.createElement('div');
+      questionEl.className = 'qa-question';
+      questionEl.textContent = `${idx + 1}. ${q.label}`;
+
+      const answerEl = document.createElement('div');
+      answerEl.className = 'qa-answer';
+      answerEl.textContent = displayVal; // textContent — no XSS risk
+
+      item.appendChild(questionEl);
+      item.appendChild(answerEl);
+      container.appendChild(item);
+    });
+
+    // Expand All toggle
+    const expandBtn = document.getElementById('expand-all-btn');
+    let expanded = false;
+    expandBtn?.addEventListener('click', () => {
+      expanded = !expanded;
+      container.classList.toggle('review-detail-card--expanded', expanded);
+      expandBtn.textContent = expanded ? 'Collapse' : 'Expand All';
+    });
+
+    // ── Pipeline stage selection ──────────────────────────────
+    pipeline.querySelectorAll('.pipeline-stage').forEach(btn => {
+      btn.addEventListener('click', () => setStatus(btn.dataset.status));
+    });
+
+    function setStatus(status) {
+      currentStatus = status;
+      const cfg = STATUS_CONFIG[status] || STATUS_CONFIG.pending;
+
+      // Update pill
+      statusPill.textContent = cfg.emoji + ' ' + cfg.label;
+      statusPill.className   = `status-pill status-${status}`;
+
+      // Update pipeline buttons
+      pipeline.querySelectorAll('.pipeline-stage').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.status === status);
+      });
+    }
+
+    // ── Show review content ───────────────────────────────────
+    loadingView.classList.add('hidden');
+    reviewView.classList.remove('hidden');
+    kbHints?.classList.remove('hidden');
+    renderActivityLog();
+
+    // ── Decision buttons ──────────────────────────────────────
+    approveBtn.addEventListener('click', () => submitDecision('accepted'));
+    rejectBtn.addEventListener('click',  () => submitDecision('rejected'));
+    statusBackBtn.addEventListener('click', () => {
+      statusView.classList.add('hidden');
+      reviewView.classList.remove('hidden');
+    });
+
+    // ── Keyboard shortcuts ────────────────────────────────────
+    document.addEventListener('keydown', e => {
+      // Don't fire shortcuts while typing in an input/textarea
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
+      if (reviewView.classList.contains('hidden')) return;
+
+      if (e.key === 'a' || e.key === 'A') { e.preventDefault(); submitDecision('accepted'); }
+      if (e.key === 'r' || e.key === 'R') { e.preventDefault(); submitDecision('rejected'); }
+      if (e.key === 'n' || e.key === 'N') { e.preventDefault(); reviewerNotesInput.focus(); }
+      if (e.key === 'Escape')              { e.preventDefault(); window.history.back(); }
+    });
+
+    // ── Submit Decision ───────────────────────────────────────
+    async function submitDecision(action) {
+      const reviewerName = reviewerNameInput.value.trim();
+      if (!reviewerName) {
+        reviewerNameInput.closest('.form-group').classList.add('invalid');
+        reviewerNameInput.focus();
+        return;
+      }
+      reviewerNameInput.closest('.form-group').classList.remove('invalid');
+      localStorage.setItem('reviewer_name', reviewerName);
+
+      const notes = reviewerNotesInput.value.trim();
+
+      // Transition to processing state
+      reviewView.classList.add('hidden');
+      statusView.classList.remove('hidden');
+      document.getElementById('status-icon-success').classList.add('hidden');
+      document.getElementById('status-icon-error').classList.add('hidden');
+      statusBackBtn.classList.add('hidden');
+      setTextSafe(document.getElementById('status-title'), 'Processing…');
+      setTextSafe(document.getElementById('status-message'), 'Sending decision to Discord. Please wait…');
+
       try {
-        let b64 = base64.replace(/-/g, '+').replace(/_/g, '/');
-        while (b64.length % 4) {
-          b64 += '=';
+        const isApproved  = action === 'accepted';
+        const finalStatus = action; // Use the action directly as the status key
+        const cfg         = STATUS_CONFIG[finalStatus] || STATUS_CONFIG.pending;
+
+        const embedColor  = isApproved ? 0x22C55E : 0xEF4444;
+        const embedTitle  = `${cfg.emoji} ${cfg.label} • ${parsedAnswers.discord_tag || tagParam}`;
+
+        let description =
+          `**Applicant:** ${parsedAnswers.discord_tag || tagParam} (ID: \`${parsedAnswers.discord_id || 'N/A'}\`)\n` +
+          `**Role:** ${schema ? schema.title : 'Staff Application'}\n` +
+          `**Status:** **${cfg.label}**\n` +
+          `**Reviewed by:** ${reviewerName}\n` +
+          `**Decision Time:** <t:${Math.floor(Date.now() / 1000)}:f>`;
+
+        if (appId)  description += `\n**Application ID:** \`${appId}\``;
+        if (notes)  description += `\n\n📝 **Reviewer Notes:**\n${notes}`;
+
+        const webhookBody = {
+          username: 'aerogrowth • Review Log',
+          avatar_url: 'https://cdn.discordapp.com/embed/avatars/3.png',
+          embeds: [{
+            author: { name: 'aerogrowth • Staff Review', icon_url: 'https://cdn.discordapp.com/embed/avatars/0.png' },
+            title:       embedTitle,
+            description,
+            color:       embedColor,
+            timestamp:   new Date().toISOString(),
+            footer:      { text: REVIEW_CONFIG.SERVER_NAME }
+          }]
+        };
+
+        const res = await sendWithRetry(REVIEW_CONFIG.WEBHOOK_URL, webhookBody);
+
+        if (res.ok || res.status === 204) {
+          // Log activity locally
+          logReviewerActivity({
+            reviewer: reviewerName,
+            applicant: parsedAnswers.discord_tag || tagParam,
+            appId,
+            action: cfg.label,
+            status: finalStatus
+          });
+
+          // Update submission history status
+          if (appId) updateSubmissionStatus(appId, finalStatus, reviewerName, notes);
+
+          document.getElementById('status-icon-success').classList.remove('hidden');
+          setTextSafe(document.getElementById('status-title'), 'Decision Submitted!');
+          setTextSafe(document.getElementById('status-message'),
+            `Application marked as ${cfg.label}. A notification was sent to your Discord channel.`);
+          statusBackBtn.classList.remove('hidden');
+        } else {
+          const errText = await res.text();
+          throw new Error(`Discord returned ${res.status}: ${errText}`);
         }
-        const binary = atob(b64);
-        const bytes = new Uint8Array(binary.length);
-        for (let i = 0; i < binary.length; i++) {
-          bytes[i] = binary.charCodeAt(i);
-        }
-        const stream = new Blob([bytes]).stream();
-        const decompressedStream = stream.pipeThrough(new DecompressionStream('deflate'));
-        const response = new Response(decompressedStream);
-        return await response.text();
-      } catch (e) {
-        console.error('Failed to decompress payload', e);
-        return null;
+      } catch (err) {
+        document.getElementById('status-icon-error').classList.remove('hidden');
+        setTextSafe(document.getElementById('status-title'), 'Action Failed');
+        setTextSafe(document.getElementById('status-message'),
+          err.message || 'Could not send decision. Check your connection or webhook configuration.');
+        statusBackBtn.classList.remove('hidden');
       }
     }
 
-    const ROLE_SCHEMAS = {
-      discord_staff: {
-        title: "Discord Staff Team",
-        questions: [
-          { id: 'hours_active',   label: 'How many hours per week can you dedicate to the server?', type: 'number', step: 2, min: 1, max: 168, placeholder: 'e.g. 15', required: true },
-          { id: 'why_staff',      label: 'Why do you want to join our staff team?', type: 'textarea', step: 2, placeholder: 'Tell us your motivation...', required: true },
-          { id: 'experience',     label: 'What prior moderation/staff experience do you have?', type: 'textarea', step: 2, placeholder: 'Mention server names, sizes, or responsibilities...', required: true },
-          { id: 'strengths',      label: 'What are your key strengths?', type: 'textarea', step: 2, placeholder: 'What makes you stand out?', required: true },
-          
-          { id: 'weaknesses',     label: 'What are your weaknesses, and how do you manage them?', type: 'textarea', step: 3, placeholder: 'Be honest - we value self-awareness...', required: true },
-          { id: 'stress_handle',  label: 'How do you handle stressful situations or conflict?', type: 'textarea', step: 3, placeholder: 'Explain your coping mechanisms...', required: true },
-          { id: 'handle_spam',    label: 'Scenario: A user is spamming links in chat. What do you do?', type: 'textarea', step: 3, placeholder: 'Detail your step-by-step reaction...', required: true },
-          { id: 'handle_argument',label: 'Scenario: Two members are arguing in text/voice. How do you de-escalate?', type: 'textarea', step: 3, placeholder: 'How do you handle conflict between users?', required: true },
-          
-          { id: 'handle_dm_adv',  label: 'Scenario: A member is reported for advertising in DMs. What do you do?', type: 'textarea', step: 4, placeholder: 'What proof do you ask for, and what action is taken?', required: true },
-          { id: 'handle_abuse',   label: 'Scenario: You suspect another staff member is abusing power. What do you do?', type: 'textarea', step: 4, placeholder: 'How do you handle internal staff conflicts?', required: true },
-          { id: 'handle_nsfw',    label: 'Scenario: A user posts NSFW content in general chat. What is your response?', type: 'textarea', step: 4, placeholder: 'What actions do you take immediately?', required: true },
-          { id: 'handle_unsure',  label: 'If you are unsure of a moderation decision, what do you do?', type: 'textarea', step: 4, placeholder: 'Who do you consult, or how do you decide?', required: true },
-          
-          { id: 'hobbies',        label: 'What are your hobbies or interests outside of Discord?', type: 'textarea', step: 5, placeholder: 'We want to know the person behind the screen!', required: true },
-          { id: 'server_mgmt',    label: 'Do you have experience with server management, bots, or configurations?', type: 'textarea', step: 5, placeholder: 'e.g. setting up dyno, permissions, webhooks...', required: true },
-          { id: 'guidelines_agree', label: 'Do you agree to follow all staff guidelines and remain active?', type: 'checkbox', step: 5, required: true, checkboxLabel: 'I agree to behave professionally, uphold server rules, and communicate with the team.' },
-          { id: 'additional_info', label: 'Is there anything else you would like to share?', type: 'textarea', step: 5, placeholder: 'Anything else we should know?', required: true }
-        ]
-      },
-      media_team: {
-        title: "Media Team",
-        questions: [
-          { id: 'media_role',     label: 'What specific role are you applying for?', type: 'select', step: 2, options: ['Graphic Designer', 'Video Editor', 'Content Creator', 'Social Media Manager', 'Other'], required: true },
-          { id: 'hours_active',   label: 'How many hours per week can you dedicate to media work?', type: 'number', step: 2, min: 1, max: 168, placeholder: 'e.g. 10', required: true },
-          { id: 'portfolio',      label: 'Please provide a link to your portfolio or past work.', type: 'text', step: 2, placeholder: 'e.g. Behance, YouTube channel, Drive link...', required: true, helperText: 'Provide links to your graphic designs, edit reels, or channels.' },
-          { id: 'tools_used',     label: 'What software/tools do you specialize in?', type: 'text', step: 2, placeholder: 'e.g. Photoshop, Premiere Pro, After Effects, Figma, Canva...', required: true },
-          
-          { id: 'why_media',      label: 'Why do you want to join our Media Team?', type: 'textarea', step: 3, placeholder: 'Tell us why you want to design/create for ROP...', required: true },
-          { id: 'prior_work',     label: 'Detail any prior experience creating media content for servers or organizations.', type: 'textarea', step: 3, placeholder: 'Describe your past projects and responsibilities...', required: true },
-          { id: 'strengths_media', label: 'What are your core creative strengths?', type: 'textarea', step: 3, placeholder: 'e.g. visual styling, motion graphics, audio design, branding...', required: true },
-          
-          { id: 'handle_negative_feedback', label: 'Scenario: A piece of content you designed/edited gets negative feedback. How do you handle it?', type: 'textarea', step: 4, placeholder: 'Explain your reaction and process...', required: true },
-          { id: 'handle_deadline', label: 'Scenario: We need a thumbnail or promo video created on short notice (e.g. 24 hours). How do you handle it?', type: 'textarea', step: 4, placeholder: 'How do you handle urgent tasks or tight deadlines?', required: true },
-          { id: 'handle_disagreement', label: 'Scenario: You disagree with a lead or staff member on design direction. How do you resolve this?', type: 'textarea', step: 4, placeholder: 'Explain how you approach differences in creative vision...', required: true },
-          
-          { id: 'hobbies',        label: 'What are your hobbies or interests outside of media work?', type: 'textarea', step: 5, placeholder: 'Tell us about yourself...', required: true },
-          { id: 'guidelines_agree', label: 'Do you agree to follow ROP media guidelines and represent the server professionally?', type: 'checkbox', step: 5, required: true, checkboxLabel: 'I agree to follow design guidelines, use licensed assets, and communicate professionally.' },
-          { id: 'additional_info', label: 'Is there anything else you would like to share?', type: 'textarea', step: 5, placeholder: 'Anything else we should know?', required: true }
-        ]
-      },
-      rbx_dev: {
-        title: "Roblox Dev Team",
-        questions: [
-          { id: 'dev_role',       label: 'What is your primary development role?', type: 'select', step: 2, options: ['Scripter (Luau)', 'Builder / Map Designer', 'UI/UX Designer', '3D Modeler (Blender)', 'Animator', 'Other'], required: true },
-          { id: 'hours_active',   label: 'How many hours per week can you dedicate to project development?', type: 'number', step: 2, min: 1, max: 168, placeholder: 'e.g. 12', required: true },
-          { id: 'roblox_profile', label: 'Please provide a link to your Roblox Profile.', type: 'text', step: 2, placeholder: 'e.g. https://www.roblox.com/users/123456/profile', required: true },
-          { id: 'portfolio',      label: 'Please provide a link to your portfolio or showcases.', type: 'text', step: 2, placeholder: 'e.g. DevForum portfolio, GitHub, Roblox place links...', required: true },
-          
-          { id: 'prior_games',    label: 'List any Roblox games you have contributed to or worked on.', type: 'textarea', step: 3, placeholder: 'Provide links and detail what you did in each game...', required: true },
-          { id: 'why_dev',        label: 'Why do you want to join the ROP Dev Team?', type: 'textarea', step: 3, placeholder: 'What motivates you to build/script for ROP?', required: true },
-          { id: 'collaboration',  label: 'How do you handle working as a team with other devs (builders, scripters, modelers)?', type: 'textarea', step: 3, placeholder: 'Describe your teamwork and communication habits...', required: true },
-          
-          { id: 'handle_bug',     label: 'Scenario: A critical game-breaking bug is discovered in production right before an event. How do you react?', type: 'textarea', step: 4, placeholder: 'Detail your troubleshooting and response steps...', required: true },
-          { id: 'handle_refactor', label: 'Scenario: Another developer refactors your scripts or modifies your assets without warning. What do you do?', type: 'textarea', step: 4, placeholder: 'How do you address creative differences or code ownership disputes?', required: true },
-          { id: 'handle_deadline', label: 'Scenario: You are struggling to meet a milestone deadline. What is your action plan?', type: 'textarea', step: 4, placeholder: 'How do you manage stress and communicate delays?', required: true },
-          
-          { id: 'hobbies',        label: 'What are your hobbies or interests outside of development?', type: 'textarea', step: 5, placeholder: 'Tell us about yourself...', required: true },
-          { id: 'guidelines_agree', label: 'Do you agree to follow developer guidelines, protect project assets, and not leak updates?', type: 'checkbox', step: 5, required: true, checkboxLabel: 'I agree to maintain asset security, follow coding/building standards, and cooperate with project leads.' },
-          { id: 'additional_info', label: 'Is there anything else you would like to share?', type: 'textarea', step: 5, placeholder: 'Anything else we should know?', required: true }
-        ]
-      }
-    };
+    // ── Activity Log Renderer ─────────────────────────────────
+    function renderActivityLog() {
+      const log    = getActivityLog();
+      const logEl  = document.getElementById('activity-log');
+      if (!logEl) return;
 
-    document.addEventListener('DOMContentLoaded', async () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const actionParam = urlParams.get('action'); // 'approve' or 'reject'
-      const rawAnswers = urlParams.get('answers');
-      const tagParam = urlParams.get('tag') || 'Unknown Applicant';
-
-      const loadingView = document.getElementById('loading-view');
-      const reviewView = document.getElementById('review-view');
-      const statusView = document.getElementById('status-view');
-      const answersContainer = document.getElementById('answers-container');
-      
-      const applicantName = document.getElementById('applicant-name');
-      const applicantId = document.getElementById('applicant-id');
-      const appStatus = document.getElementById('application-status');
-      
-      const reviewerNameInput = document.getElementById('reviewer_name');
-      const approveBtn = document.getElementById('approve-btn');
-      const rejectBtn = document.getElementById('reject-btn');
-      const actionBox = document.getElementById('action-box');
-      
-      const statusIconSuccess = document.getElementById('status-icon-success');
-      const statusIconError = document.getElementById('status-icon-error');
-      const statusTitle = document.getElementById('status-title');
-      const statusMessage = document.getElementById('status-message');
-      const statusBackBtn = document.getElementById('status-back-btn');
-
-      // Autofill reviewer name if stored in local storage
-      const savedReviewer = localStorage.getItem('reviewer_name');
-      if (savedReviewer) {
-        reviewerNameInput.value = savedReviewer;
-      }
-
-      let parsedAnswers = null;
-      try {
-        if (rawAnswers) {
-          const decodedAnswers = decodeURIComponent(rawAnswers);
-          if (decodedAnswers.startsWith('c:')) {
-            const compressedBase64 = decodedAnswers.substring(2);
-            const decompressed = await decompressPayload(compressedBase64);
-            if (decompressed) {
-              parsedAnswers = JSON.parse(decompressed);
-            }
-          } else {
-            parsedAnswers = JSON.parse(decodedAnswers);
-          }
-        }
-      } catch (e) {
-        console.error("Failed to parse answers", e);
-      }
-
-      if (!parsedAnswers) {
-        showError('Invalid URL parameters', 'No valid application answers were found in the URL. Please make sure you clicked the correct link from Discord.');
+      if (log.length === 0) {
+        logEl.innerHTML = '<p class="activity-empty">No review activity recorded yet.</p>';
         return;
       }
 
-      // Find dynamic schema for applicant's role
-      const selectedRole = parsedAnswers.role || 'discord_staff';
-      const schema = ROLE_SCHEMAS[selectedRole];
-
-      // Combine static and dynamic questions for rendering
-      const activeQuestions = [
-        { id: 'discord_tag', label: 'Discord Username' },
-        { id: 'discord_id', label: 'Discord User ID' },
-        { id: 'age', label: 'Age' },
-        { id: 'timezone', label: 'Timezone / Country' }
-      ];
-      
-      if (schema) {
-        schema.questions.forEach(q => {
-          activeQuestions.push(q);
-        });
-      }
-
-      // Populating basic info
-      applicantName.innerText = parsedAnswers.discord_tag || tagParam;
-      applicantId.innerText = `Discord ID: ${parsedAnswers.discord_id || 'N/A'}`;
-      if (schema) {
-        document.getElementById('app-subtitle').innerText = `Reviewing application for: ${schema.title}`;
-      }
-      
-      // Update badge initially based on parameter action
-      if (actionParam === 'approve') {
-        appStatus.innerText = 'Pre-selected: Approve';
-        appStatus.className = 'status-badge status-approved';
-      } else if (actionParam === 'reject') {
-        appStatus.innerText = 'Pre-selected: Reject';
-        appStatus.className = 'status-badge status-rejected';
-      } else {
-        appStatus.innerText = 'Pending Review';
-        appStatus.className = 'status-badge status-pending';
-      }
-
-      // Render Questions and Answers
-      answersContainer.innerHTML = '';
-      activeQuestions.forEach((q, idx) => {
+      logEl.innerHTML = '';
+      log.slice(0, 10).forEach(entry => {
         const item = document.createElement('div');
-        item.className = 'qa-item';
+        item.className = 'activity-item';
+
+        const cfg = STATUS_CONFIG[entry.status] || {};
         item.innerHTML = `
-          <div class="qa-question">${idx + 1}. ${q.label}</div>
-          <div class="qa-answer">${escapeHTML(parsedAnswers[q.id] || 'N/A')}</div>
+          <span class="activity-badge" style="background:${cfg.color || '#5865f2'}20;color:${cfg.color || '#5865f2'}">${cfg.emoji || '•'}</span>
+          <div class="activity-body">
+            <span class="activity-text">
+              <strong>${escapeHTML(entry.reviewer)}</strong> marked
+              <strong>${escapeHTML(entry.applicant)}</strong> as <strong>${escapeHTML(entry.action)}</strong>
+            </span>
+            <span class="activity-time">${timeAgo(entry.at)}</span>
+          </div>
         `;
-        answersContainer.appendChild(item);
+        logEl.appendChild(item);
       });
+    }
 
-      // Hide loading, show content
+    // ── Error screen ──────────────────────────────────────────
+    function showError(title, msg) {
       loadingView.classList.add('hidden');
-      reviewView.classList.remove('hidden');
-
-      // Event handlers for review action
-      approveBtn.addEventListener('click', () => submitDecision('approve'));
-      rejectBtn.addEventListener('click', () => submitDecision('reject'));
-      statusBackBtn.addEventListener('click', () => {
-        statusView.classList.add('hidden');
-        reviewView.classList.remove('hidden');
-      });
-
-      async function submitDecision(action) {
-        const reviewerName = reviewerNameInput.value.trim();
-        if (!reviewerName) {
-          reviewerNameInput.closest('.form-group').classList.add('invalid');
-          return;
-        }
-
-        reviewerNameInput.closest('.form-group').classList.remove('invalid');
-        localStorage.setItem('reviewer_name', reviewerName);
-
-        // Hide form, show status view
-        reviewView.classList.add('hidden');
-        statusView.classList.remove('hidden');
-        statusIconSuccess.classList.add('hidden');
-        statusIconError.classList.add('hidden');
-        statusBackBtn.classList.add('hidden');
-        statusTitle.innerText = 'Processing...';
-        statusMessage.innerText = 'Sending decision notification to Discord. Please wait.';
-
-        try {
-          const isApproved = action === 'approve';
-          const embedTitle = isApproved 
-            ? `🟢 Application Approved — ${parsedAnswers.discord_tag || tagParam}`
-            : `🔴 Application Rejected — ${parsedAnswers.discord_tag || tagParam}`;
-          
-          const embedColor = isApproved ? 3066993 : 15158332; // Green or Red
-          
-          const webhookBody = {
-            username: 'Staff Review System',
-            embeds: [{
-              title: embedTitle,
-              description: 
-                `Applicant: **${parsedAnswers.discord_tag || tagParam}** (ID: \`${parsedAnswers.discord_id || 'N/A'}\`)\n` +
-                `Role: **${schema ? schema.title : 'Staff Application'}**\n` +
-                `Reviewed by: **${reviewerName}**\n` +
-                `Status: **${isApproved ? 'Approved' : 'Rejected'}**\n` +
-                `Decision Time: <t:${Math.floor(Date.now() / 1000)}:f>`,
-              color: embedColor,
-              timestamp: new Date().toISOString()
-            }]
-          };
-
-          const res = await fetch(CONFIG.WEBHOOK_URL, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(webhookBody)
-          });
-
-          if (res.ok || res.status === 204) {
-            statusTitle.innerText = `Decision Submitted!`;
-            statusMessage.innerText = `Successfully marked application as ${action.toUpperCase()}.\nA notification embed was sent to your Discord channel.`;
-            statusIconSuccess.classList.remove('hidden');
-            
-            // Update status badge on review page
-            appStatus.innerText = action.toUpperCase();
-            appStatus.className = `status-badge ${isApproved ? 'status-approved' : 'status-rejected'}`;
-            
-            // Allow back-navigation in case reviewer wants to re-check answers
-            statusBackBtn.classList.remove('hidden');
-          } else {
-            const errText = await res.text();
-            throw new Error(`Discord Webhook returned ${res.status}: ${errText}`);
-          }
-        } catch (err) {
-          statusTitle.innerText = 'Action Failed';
-          statusMessage.innerText = err.message || 'Could not send decision. Please check your internet connection or webhook configuration.';
-          statusIconError.classList.remove('hidden');
-          statusBackBtn.classList.remove('hidden');
-        }
-      }
-
-      function showError(title, msg) {
-        loadingView.classList.add('hidden');
-        reviewView.classList.add('hidden');
-        statusView.classList.remove('hidden');
-        statusIconSuccess.classList.add('hidden');
-        statusIconError.classList.remove('hidden');
-        statusTitle.innerText = title;
-        statusMessage.innerText = msg;
-      }
-
-      function escapeHTML(str) {
-        return str
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;')
-          .replace(/'/g, '&#039;');
-      }
-    });
+      reviewView.classList.add('hidden');
+      statusView.classList.remove('hidden');
+      document.getElementById('status-icon-error').classList.remove('hidden');
+      setTextSafe(document.getElementById('status-title'), title);
+      setTextSafe(document.getElementById('status-message'), msg);
+    }
+  });
   </script>
 </body>
 </html>
