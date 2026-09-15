@@ -923,6 +923,26 @@ body {
   gap: 10px;
 }
 
+.header-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  color: #aeb7c7;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.eyebrow-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #62d38a;
+  box-shadow: 0 0 0 4px rgba(98, 211, 138, 0.12), 0 0 16px rgba(98, 211, 138, 0.6);
+}
+
 .app-header h1 {
   font-size: clamp(2rem, 4vw, 2.8rem);
   letter-spacing: -0.03em;
@@ -931,6 +951,28 @@ body {
 .app-header p {
   color: #aeb7c7;
   max-width: 620px;
+}
+
+.header-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.header-meta span {
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.035);
+  color: #9fa8b8;
+  font-size: 0.74rem;
+}
+
+.header-meta strong {
+  color: #f4f6fb;
+  font-weight: 800;
 }
 
 .logo-wrapper {
@@ -951,6 +993,39 @@ body {
   border-radius: 16px;
   padding: clamp(24px, 5vw, 44px);
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+}
+
+.form-context {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 28px;
+  margin-bottom: 34px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.context-kicker {
+  display: block;
+  margin-bottom: 6px;
+  color: #8e9cf4;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.form-context h2 {
+  color: #fff;
+  font-size: 1.55rem;
+  letter-spacing: -0.025em;
+}
+
+.form-context p {
+  max-width: 350px;
+  color: #aeb7c7;
+  font-size: 0.86rem;
+  line-height: 1.55;
 }
 
 .section-title,
@@ -1188,6 +1263,17 @@ body {
   .review-header {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .form-context {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 26px;
+  }
+
+  .form-context p {
+    max-width: none;
   }
 
   .review-header-badges {
